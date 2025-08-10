@@ -1,0 +1,396 @@
+/* Light Theme - ZZZ Tournament */
+
+[data-theme="light"] {
+    /* ===== BACKGROUND COLORS ===== */
+    --color-background: #ffffff;
+    --color-background-secondary: #f8fafc;
+    --color-background-tertiary: #f1f5f9;
+    
+    /* Surface colors */
+    --color-surface: #ffffff;
+    --color-surface-secondary: #f8fafc;
+    --color-surface-tertiary: #f1f5f9;
+    --color-surface-hover: #e2e8f0;
+    --color-surface-active: #cbd5e1;
+    
+    /* ===== TEXT COLORS ===== */
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-tertiary: #64748b;
+    --color-text-quaternary: #94a3b8;
+    --color-text-disabled: #cbd5e1;
+    --color-text-inverse: #ffffff;
+    
+    /* ===== BORDER COLORS ===== */
+    --color-border: #e2e8f0;
+    --color-border-secondary: #cbd5e1;
+    --color-border-tertiary: #94a3b8;
+    --color-border-hover: #94a3b8;
+    --color-border-focus: var(--color-primary-500);
+    
+    /* ===== PRIMARY COLORS (ZZZ Orange) ===== */
+    --color-primary: #ff6b35;
+    --color-primary-hover: #ff5722;
+    --color-primary-active: #e64a19;
+    --color-primary-disabled: #ffcdb2;
+    --color-primary-text: #ffffff;
+    
+    /* Primary variants */
+    --color-primary-50: #fff5f2;
+    --color-primary-100: #ffe6e0;
+    --color-primary-200: #ffc7b8;
+    --color-primary-300: #ff9f7a;
+    --color-primary-400: #ff6b35;
+    --color-primary-500: #ff4500;
+    --color-primary-600: #e63e00;
+    --color-primary-700: #cc3700;
+    --color-primary-800: #b33000;
+    --color-primary-900: #992900;
+    
+    /* ===== SECONDARY COLORS (Electric Blue) ===== */
+    --color-secondary: #0ea5e9;
+    --color-secondary-hover: #0284c7;
+    --color-secondary-active: #0369a1;
+    --color-secondary-disabled: #bae6fd;
+    --color-secondary-text: #ffffff;
+    
+    /* ===== STATUS COLORS ===== */
+    
+    /* Success (Green) */
+    --color-success: #059669;
+    --color-success-hover: #047857;
+    --color-success-active: #065f46;
+    --color-success-light: #d1fae5;
+    --color-success-text: #ffffff;
+    
+    /* Warning (Amber) */
+    --color-warning: #d97706;
+    --color-warning-hover: #b45309;
+    --color-warning-active: #92400e;
+    --color-warning-light: #fef3c7;
+    --color-warning-text: #ffffff;
+    
+    /* Error (Red) */
+    --color-error: #dc2626;
+    --color-error-hover: #b91c1c;
+    --color-error-active: #991b1b;
+    --color-error-light: #fee2e2;
+    --color-error-text: #ffffff;
+    
+    /* Info (Blue) */
+    --color-info: #2563eb;
+    --color-info-hover: #1d4ed8;
+    --color-info-active: #1e40af;
+    --color-info-light: #dbeafe;
+    --color-info-text: #ffffff;
+    
+    /* ===== ZZZ ELEMENT COLORS (Light theme variants) ===== */
+    --color-element-physical: #64748b;
+    --color-element-physical-bg: rgba(100, 116, 139, 0.1);
+    
+    --color-element-fire: #dc2626;
+    --color-element-fire-bg: rgba(220, 38, 38, 0.1);
+    
+    --color-element-ice: #2563eb;
+    --color-element-ice-bg: rgba(37, 99, 235, 0.1);
+    
+    --color-element-electric: #d97706;
+    --color-element-electric-bg: rgba(217, 119, 6, 0.1);
+    
+    --color-element-ether: #7c3aed;
+    --color-element-ether-bg: rgba(124, 58, 237, 0.1);
+    
+    /* ===== RARITY COLORS ===== */
+    --color-rarity-a: #2563eb;
+    --color-rarity-a-bg: rgba(37, 99, 235, 0.1);
+    --color-rarity-a-border: rgba(37, 99, 235, 0.3);
+    
+    --color-rarity-s: #d97706;
+    --color-rarity-s-bg: rgba(217, 119, 6, 0.1);
+    --color-rarity-s-border: rgba(217, 119, 6, 0.3);
+    --color-rarity-s-glow: rgba(217, 119, 6, 0.4);
+    
+    /* ===== ROLE COLORS ===== */
+    --color-role-attack: #dc2626;
+    --color-role-stun: #2563eb;
+    --color-role-anomaly: #7c3aed;
+    --color-role-support: #059669;
+    --color-role-defense: #d97706;
+    
+    /* ===== FORM ELEMENTS ===== */
+    --color-input-bg: var(--color-surface);
+    --color-input-border: var(--color-border);
+    --color-input-border-focus: var(--color-primary-500);
+    --color-input-text: var(--color-text-primary);
+    --color-input-placeholder: var(--color-text-tertiary);
+    --color-input-disabled: var(--color-surface-tertiary);
+    
+    /* ===== BUTTON VARIANTS ===== */
+    
+    /* Ghost button */
+    --color-button-ghost-bg: transparent;
+    --color-button-ghost-hover: var(--color-surface-hover);
+    --color-button-ghost-text: var(--color-text-secondary);
+    
+    /* Outline button */
+    --color-button-outline-bg: transparent;
+    --color-button-outline-border: var(--color-border);
+    --color-button-outline-hover: var(--color-surface-hover);
+    --color-button-outline-text: var(--color-text-primary);
+    
+    /* ===== NAVIGATION ===== */
+    --color-nav-bg: var(--color-surface);
+    --color-nav-border: var(--color-border);
+    --color-nav-item-hover: var(--color-surface-hover);
+    --color-nav-item-active: var(--color-primary-500);
+    --color-nav-text: var(--color-text-secondary);
+    --color-nav-text-active: var(--color-primary-500);
+    
+    /* ===== SIDEBAR ===== */
+    --color-sidebar-bg: var(--color-surface);
+    --color-sidebar-border: var(--color-border);
+    --color-sidebar-item-hover: var(--color-surface-hover);
+    --color-sidebar-item-active: var(--color-primary-500);
+    
+    /* ===== CARD COMPONENTS ===== */
+    --color-card-bg: var(--color-surface);
+    --color-card-border: var(--color-border);
+    --color-card-hover: var(--color-surface-hover);
+    --color-card-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* ===== MODAL/OVERLAY ===== */
+    --color-overlay: rgba(0, 0, 0, 0.5);
+    --color-modal-bg: var(--color-surface);
+    --color-modal-border: var(--color-border);
+    
+    /* ===== DROPDOWN/MENU ===== */
+    --color-dropdown-bg: var(--color-surface);
+    --color-dropdown-border: var(--color-border);
+    --color-dropdown-shadow: rgba(0, 0, 0, 0.15);
+    --color-dropdown-item-hover: var(--color-surface-hover);
+    
+    /* ===== TOOLTIP ===== */
+    --color-tooltip-bg: var(--color-text-primary);
+    --color-tooltip-text: var(--color-text-inverse);
+    --color-tooltip-border: var(--color-border);
+    
+    /* ===== TABLE ===== */
+    --color-table-bg: var(--color-surface);
+    --color-table-border: var(--color-border);
+    --color-table-header-bg: var(--color-surface-secondary);
+    --color-table-row-hover: var(--color-surface-hover);
+    --color-table-row-selected: rgba(255, 107, 53, 0.1);
+    
+    /* ===== BADGE/TAG ===== */
+    --color-badge-bg: var(--color-surface-secondary);
+    --color-badge-text: var(--color-text-secondary);
+    --color-badge-border: var(--color-border);
+    
+    /* ===== PROGRESS ===== */
+    --color-progress-bg: var(--color-surface-secondary);
+    --color-progress-fill: var(--color-primary-500);
+    --color-progress-text: var(--color-text-primary);
+    
+    /* ===== DIVIDER ===== */
+    --color-divider: var(--color-border);
+    --color-divider-strong: var(--color-border-secondary);
+    
+    /* ===== FOCUS RING ===== */
+    --color-focus-ring: var(--color-primary-500);
+    --color-focus-ring-offset: var(--color-background);
+    
+    /* ===== SCROLLBAR ===== */
+    --color-scrollbar-track: var(--color-surface-secondary);
+    --color-scrollbar-thumb: var(--color-border-secondary);
+    --color-scrollbar-thumb-hover: var(--color-text-tertiary);
+    
+    /* ===== SELECTION ===== */
+    --color-selection-bg: var(--color-primary-500);
+    --color-selection-text: #ffffff;
+    
+    /* ===== TOURNAMENT SPECIFIC ===== */
+    --color-tournament-bracket-line: var(--color-border-secondary);
+    --color-tournament-match-bg: var(--color-surface);
+    --color-tournament-match-border: var(--color-border);
+    --color-tournament-match-hover: var(--color-surface-hover);
+    --color-tournament-match-active: rgba(255, 107, 53, 0.1);
+    --color-tournament-match-finished: var(--color-surface-tertiary);
+    
+    /* ===== LEADERBOARD ===== */
+    --color-leaderboard-rank-1: #d97706;
+    --color-leaderboard-rank-2: #64748b;
+    --color-leaderboard-rank-3: #ea580c;
+    --color-leaderboard-rank-bg: var(--color-surface-secondary);
+    
+    /* ===== CHAT ===== */
+    --color-chat-bg: var(--color-surface);
+    --color-chat-message-bg: var(--color-surface-secondary);
+    --color-chat-message-own: rgba(255, 107, 53, 0.1);
+    --color-chat-message-system: rgba(37, 99, 235, 0.1);
+    --color-chat-input-bg: var(--color-surface);
+    
+    /* ===== HERO CARD ===== */
+    --color-hero-card-bg: var(--color-surface);
+    --color-hero-card-border: var(--color-border);
+    --color-hero-card-hover: var(--color-surface-hover);
+    --color-hero-card-selected: rgba(255, 107, 53, 0.15);
+    
+    /* ===== RATING TIERS ===== */
+    --color-tier-bronze: #cd7f32;
+    --color-tier-silver: #71717a;
+    --color-tier-gold: #d97706;
+    --color-tier-platinum: #64748b;
+    --color-tier-diamond: #0ea5e9;
+    --color-tier-master: #dc2626;
+    --color-tier-grandmaster: #7c3aed;
+  }
+  
+  /* ===== LIGHT THEME SPECIFIC STYLES ===== */
+  
+  [data-theme="light"] body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+  }
+  
+  /* Subtle shadow effects for light theme */
+  [data-theme="light"] .shadow-soft {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  [data-theme="light"] .shadow-medium {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+  
+  [data-theme="light"] .shadow-strong {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+  }
+  
+  /* Reduced glow effects for light theme */
+  [data-theme="light"] .glow-primary {
+    box-shadow: 0 0 16px rgba(255, 107, 53, 0.25);
+  }
+  
+  [data-theme="light"] .glow-secondary {
+    box-shadow: 0 0 16px rgba(14, 165, 233, 0.25);
+  }
+  
+  [data-theme="light"] .glow-success {
+    box-shadow: 0 0 16px rgba(5, 150, 105, 0.25);
+  }
+  
+  [data-theme="light"] .glow-error {
+    box-shadow: 0 0 16px rgba(220, 38, 38, 0.25);
+  }
+  
+  /* S-rank hero subtle glow in light theme */
+  [data-theme="light"] .hero-card-s {
+    box-shadow: 
+      0 0 12px rgba(217, 119, 6, 0.2),
+      0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  [data-theme="light"] .hero-card-s:hover {
+    box-shadow: 
+      0 0 16px rgba(217, 119, 6, 0.3),
+      0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Enhanced borders for better definition in light theme */
+  [data-theme="light"] .border-enhanced {
+    border-color: var(--color-border-secondary);
+  }
+  
+  /* Light theme selection */
+  [data-theme="light"] ::selection {
+    background-color: var(--color-primary-500);
+    color: var(--color-text-inverse);
+  }
+  
+  [data-theme="light"] ::-moz-selection {
+    background-color: var(--color-primary-500);
+    color: var(--color-text-inverse);
+  }
+  
+  /* Light theme specific card styling */
+  [data-theme="light"] .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  [data-theme="light"] .card:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* Input styling for light theme */
+  [data-theme="light"] .input {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+  }
+  
+  [data-theme="light"] .input:focus {
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  }
+  
+  [data-theme="light"] .input::placeholder {
+    color: var(--color-text-tertiary);
+  }
+  
+  /* Button styling for light theme */
+  [data-theme="light"] .button-outline {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+  }
+  
+  [data-theme="light"] .button-outline:hover {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-border-hover);
+  }
+  
+  [data-theme="light"] .button-ghost {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+  }
+  
+  [data-theme="light"] .button-ghost:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text-primary);
+  }
+  
+  /* Navigation styling for light theme */
+  [data-theme="light"] .nav-item {
+    color: var(--color-text-secondary);
+  }
+  
+  [data-theme="light"] .nav-item:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text-primary);
+  }
+  
+  [data-theme="light"] .nav-item.active {
+    background-color: rgba(255, 107, 53, 0.1);
+    color: var(--color-primary-500);
+  }
+  
+  /* Table styling for light theme */
+  [data-theme="light"] .table {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+  
+  [data-theme="light"] .table th {
+    background-color: var(--color-surface-secondary);
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  [data-theme="light"] .table td {
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  [data-theme="light"] .table tr:hover {
+    background-color: var(--color-surface-hover);
+  }

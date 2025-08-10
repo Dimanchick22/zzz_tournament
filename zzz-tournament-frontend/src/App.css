@@ -1,0 +1,223 @@
+/* App компонент стили */
+.app {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+  
+  /* Layout для страниц */
+  .app-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Переходы между страницами */
+  .page-transition-enter {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  
+  .page-transition-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms ease-out, transform 300ms ease-out;
+  }
+  
+  .page-transition-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .page-transition-exit-active {
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 300ms ease-in, transform 300ms ease-in;
+  }
+  
+  /* Стили для ZZZ тематики */
+  .zzz-theme {
+    /* Градиенты в стиле ZZZ */
+    --gradient-primary: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #ff9f43 100%);
+    --gradient-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-success: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    --gradient-warning: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    --gradient-error: linear-gradient(135deg, #ff8a80 0%, #ff5722 100%);
+    
+    /* Тени в стиле игры */
+    --shadow-glow: 0 0 20px rgba(255, 107, 107, 0.3);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.2);
+    --shadow-elevated: 0 16px 64px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Глобальные эффекты */
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+    transition: box-shadow var(--transition-base);
+  }
+  
+  .glow-effect:hover {
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+  }
+  
+  /* Фоновые паттерны */
+  .bg-pattern-dots::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  
+  .bg-pattern-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(var(--color-border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.1;
+    pointer-events: none;
+  }
+  
+  /* Эффекты для карточек */
+  .card-hover {
+    transition: all var(--transition-base);
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated);
+  }
+  
+  /* Стили для элементов ZZZ */
+  .element-physical {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    color: white;
+  }
+  
+  .element-fire {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+  }
+  
+  .element-ice {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+  }
+  
+  .element-electric {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    color: white;
+  }
+  
+  .element-ether {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    color: white;
+  }
+  
+  /* Стили для рарности героев */
+  .rarity-a {
+    border: 2px solid #3498db;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%);
+  }
+  
+  .rarity-s {
+    border: 2px solid #f39c12;
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+  }
+  
+  /* Стили для ролей */
+  .role-attack {
+    color: #e74c3c;
+  }
+  
+  .role-stun {
+    color: #3498db;
+  }
+  
+  .role-anomaly {
+    color: #9b59b6;
+  }
+  
+  .role-support {
+    color: #27ae60;
+  }
+  
+  .role-defense {
+    color: #f39c12;
+  }
+  
+  /* Анимации для турнирной сетки */
+  .bracket-line {
+    stroke: var(--color-border);
+    stroke-width: 2;
+    fill: none;
+    transition: stroke var(--transition-base);
+  }
+  
+  .bracket-match {
+    transition: all var(--transition-base);
+  }
+  
+  .bracket-match:hover {
+    transform: scale(1.05);
+    z-index: 10;
+  }
+  
+  .bracket-match.active {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+  }
+  
+  .bracket-match.finished {
+    opacity: 0.7;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .app {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .card-hover:hover {
+      transform: none;
+    }
+    
+    .glow-effect:hover {
+      box-shadow: var(--shadow-glow);
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    .app {
+      background: white !important;
+      color: black !important;
+    }
+    
+    .glow-effect,
+    .card-hover {
+      box-shadow: none !important;
+    }
+    
+    .bg-pattern-dots::before,
+    .bg-pattern-grid::before {
+      display: none;
+    }
+  }

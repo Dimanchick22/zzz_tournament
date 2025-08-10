@@ -1,0 +1,301 @@
+/* Dark Theme - ZZZ Tournament */
+
+[data-theme="dark"] {
+    /* ===== BACKGROUND COLORS ===== */
+    --color-background: #0a0a0a;
+    --color-background-secondary: #111111;
+    --color-background-tertiary: #1a1a1a;
+    
+    /* Surface colors */
+    --color-surface: #1a1a1a;
+    --color-surface-secondary: #242424;
+    --color-surface-tertiary: #2d2d2d;
+    --color-surface-hover: #333333;
+    --color-surface-active: #404040;
+    
+    /* ===== TEXT COLORS ===== */
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #a1a1aa;
+    --color-text-tertiary: #71717a;
+    --color-text-quaternary: #52525b;
+    --color-text-disabled: #3f3f46;
+    --color-text-inverse: #000000;
+    
+    /* ===== BORDER COLORS ===== */
+    --color-border: #333333;
+    --color-border-secondary: #404040;
+    --color-border-tertiary: #525252;
+    --color-border-hover: #525252;
+    --color-border-focus: var(--color-primary-500);
+    
+    /* ===== PRIMARY COLORS (ZZZ Orange) ===== */
+    --color-primary: #ff6b35;
+    --color-primary-hover: #ff5722;
+    --color-primary-active: #e64a19;
+    --color-primary-disabled: #4a2c1a;
+    --color-primary-text: #ffffff;
+    
+    /* Primary variants */
+    --color-primary-50: #1a0f0d;
+    --color-primary-100: #331e1a;
+    --color-primary-200: #4d2d26;
+    --color-primary-300: #663c33;
+    --color-primary-400: #994d40;
+    --color-primary-500: #ff6b35;
+    --color-primary-600: #ff7a47;
+    --color-primary-700: #ff8959;
+    --color-primary-800: #ff986b;
+    --color-primary-900: #ffa77d;
+    
+    /* ===== SECONDARY COLORS (Electric Blue) ===== */
+    --color-secondary: #0ea5e9;
+    --color-secondary-hover: #0284c7;
+    --color-secondary-active: #0369a1;
+    --color-secondary-disabled: #1e293b;
+    --color-secondary-text: #ffffff;
+    
+    /* ===== STATUS COLORS ===== */
+    
+    /* Success (Green) */
+    --color-success: #22c55e;
+    --color-success-hover: #16a34a;
+    --color-success-active: #15803d;
+    --color-success-light: rgba(34, 197, 94, 0.1);
+    --color-success-text: #ffffff;
+    
+    /* Warning (Amber) */
+    --color-warning: #f59e0b;
+    --color-warning-hover: #d97706;
+    --color-warning-active: #b45309;
+    --color-warning-light: rgba(245, 158, 11, 0.1);
+    --color-warning-text: #000000;
+    
+    /* Error (Red) */
+    --color-error: #ef4444;
+    --color-error-hover: #dc2626;
+    --color-error-active: #b91c1c;
+    --color-error-light: rgba(239, 68, 68, 0.1);
+    --color-error-text: #ffffff;
+    
+    /* Info (Blue) */
+    --color-info: #3b82f6;
+    --color-info-hover: #2563eb;
+    --color-info-active: #1d4ed8;
+    --color-info-light: rgba(59, 130, 246, 0.1);
+    --color-info-text: #ffffff;
+    
+    /* ===== ZZZ ELEMENT COLORS (Dark theme variants) ===== */
+    --color-element-physical: #8b9dc3;
+    --color-element-physical-bg: rgba(139, 157, 195, 0.1);
+    
+    --color-element-fire: #ff6b6b;
+    --color-element-fire-bg: rgba(255, 107, 107, 0.1);
+    
+    --color-element-ice: #74c0fc;
+    --color-element-ice-bg: rgba(116, 192, 252, 0.1);
+    
+    --color-element-electric: #ffd43b;
+    --color-element-electric-bg: rgba(255, 212, 59, 0.1);
+    
+    --color-element-ether: #da77f2;
+    --color-element-ether-bg: rgba(218, 119, 242, 0.1);
+    
+    /* ===== RARITY COLORS ===== */
+    --color-rarity-a: #4dabf7;
+    --color-rarity-a-bg: rgba(77, 171, 247, 0.1);
+    --color-rarity-a-border: rgba(77, 171, 247, 0.3);
+    
+    --color-rarity-s: #ffd43b;
+    --color-rarity-s-bg: rgba(255, 212, 59, 0.1);
+    --color-rarity-s-border: rgba(255, 212, 59, 0.3);
+    --color-rarity-s-glow: rgba(255, 212, 59, 0.4);
+    
+    /* ===== ROLE COLORS ===== */
+    --color-role-attack: #ff6b6b;
+    --color-role-stun: #4dabf7;
+    --color-role-anomaly: #da77f2;
+    --color-role-support: #51cf66;
+    --color-role-defense: #ffd43b;
+    
+    /* ===== FORM ELEMENTS ===== */
+    --color-input-bg: var(--color-surface-secondary);
+    --color-input-border: var(--color-border);
+    --color-input-border-focus: var(--color-primary-500);
+    --color-input-text: var(--color-text-primary);
+    --color-input-placeholder: var(--color-text-tertiary);
+    --color-input-disabled: var(--color-surface-tertiary);
+    
+    /* ===== BUTTON VARIANTS ===== */
+    
+    /* Ghost button */
+    --color-button-ghost-bg: transparent;
+    --color-button-ghost-hover: var(--color-surface-hover);
+    --color-button-ghost-text: var(--color-text-secondary);
+    
+    /* Outline button */
+    --color-button-outline-bg: transparent;
+    --color-button-outline-border: var(--color-border);
+    --color-button-outline-hover: var(--color-surface-hover);
+    --color-button-outline-text: var(--color-text-primary);
+    
+    /* ===== NAVIGATION ===== */
+    --color-nav-bg: var(--color-surface);
+    --color-nav-border: var(--color-border);
+    --color-nav-item-hover: var(--color-surface-hover);
+    --color-nav-item-active: var(--color-primary-500);
+    --color-nav-text: var(--color-text-secondary);
+    --color-nav-text-active: var(--color-primary-500);
+    
+    /* ===== SIDEBAR ===== */
+    --color-sidebar-bg: var(--color-surface);
+    --color-sidebar-border: var(--color-border);
+    --color-sidebar-item-hover: var(--color-surface-hover);
+    --color-sidebar-item-active: var(--color-primary-500);
+    
+    /* ===== CARD COMPONENTS ===== */
+    --color-card-bg: var(--color-surface);
+    --color-card-border: var(--color-border);
+    --color-card-hover: var(--color-surface-secondary);
+    --color-card-shadow: rgba(0, 0, 0, 0.3);
+    
+    /* ===== MODAL/OVERLAY ===== */
+    --color-overlay: rgba(0, 0, 0, 0.8);
+    --color-modal-bg: var(--color-surface);
+    --color-modal-border: var(--color-border-secondary);
+    
+    /* ===== DROPDOWN/MENU ===== */
+    --color-dropdown-bg: var(--color-surface-secondary);
+    --color-dropdown-border: var(--color-border-secondary);
+    --color-dropdown-shadow: rgba(0, 0, 0, 0.4);
+    --color-dropdown-item-hover: var(--color-surface-tertiary);
+    
+    /* ===== TOOLTIP ===== */
+    --color-tooltip-bg: var(--color-surface-tertiary);
+    --color-tooltip-text: var(--color-text-primary);
+    --color-tooltip-border: var(--color-border-secondary);
+    
+    /* ===== TABLE ===== */
+    --color-table-bg: var(--color-surface);
+    --color-table-border: var(--color-border);
+    --color-table-header-bg: var(--color-surface-secondary);
+    --color-table-row-hover: var(--color-surface-hover);
+    --color-table-row-selected: rgba(255, 107, 53, 0.1);
+    
+    /* ===== BADGE/TAG ===== */
+    --color-badge-bg: var(--color-surface-secondary);
+    --color-badge-text: var(--color-text-secondary);
+    --color-badge-border: var(--color-border);
+    
+    /* ===== PROGRESS ===== */
+    --color-progress-bg: var(--color-surface-secondary);
+    --color-progress-fill: var(--color-primary-500);
+    --color-progress-text: var(--color-text-primary);
+    
+    /* ===== DIVIDER ===== */
+    --color-divider: var(--color-border);
+    --color-divider-strong: var(--color-border-secondary);
+    
+    /* ===== FOCUS RING ===== */
+    --color-focus-ring: var(--color-primary-500);
+    --color-focus-ring-offset: var(--color-background);
+    
+    /* ===== SCROLLBAR ===== */
+    --color-scrollbar-track: var(--color-surface-secondary);
+    --color-scrollbar-thumb: var(--color-border-secondary);
+    --color-scrollbar-thumb-hover: var(--color-text-tertiary);
+    
+    /* ===== SELECTION ===== */
+    --color-selection-bg: var(--color-primary-500);
+    --color-selection-text: #ffffff;
+    
+    /* ===== TOURNAMENT SPECIFIC ===== */
+    --color-tournament-bracket-line: var(--color-border-secondary);
+    --color-tournament-match-bg: var(--color-surface);
+    --color-tournament-match-border: var(--color-border);
+    --color-tournament-match-hover: var(--color-surface-hover);
+    --color-tournament-match-active: rgba(255, 107, 53, 0.2);
+    --color-tournament-match-finished: var(--color-surface-tertiary);
+    
+    /* ===== LEADERBOARD ===== */
+    --color-leaderboard-rank-1: #ffd43b;
+    --color-leaderboard-rank-2: #8b9dc3;
+    --color-leaderboard-rank-3: #ff8c42;
+    --color-leaderboard-rank-bg: var(--color-surface-secondary);
+    
+    /* ===== CHAT ===== */
+    --color-chat-bg: var(--color-surface);
+    --color-chat-message-bg: var(--color-surface-secondary);
+    --color-chat-message-own: rgba(255, 107, 53, 0.1);
+    --color-chat-message-system: rgba(59, 130, 246, 0.1);
+    --color-chat-input-bg: var(--color-surface-secondary);
+    
+    /* ===== HERO CARD ===== */
+    --color-hero-card-bg: var(--color-surface);
+    --color-hero-card-border: var(--color-border);
+    --color-hero-card-hover: var(--color-surface-hover);
+    --color-hero-card-selected: rgba(255, 107, 53, 0.2);
+    
+    /* ===== RATING TIERS ===== */
+    --color-tier-bronze: #cd7f32;
+    --color-tier-silver: #c0c0c0;
+    --color-tier-gold: #ffd700;
+    --color-tier-platinum: #e5e4e2;
+    --color-tier-diamond: #b9f2ff;
+    --color-tier-master: #ff6347;
+    --color-tier-grandmaster: #9400d3;
+  }
+  
+  /* ===== DARK THEME SPECIFIC STYLES ===== */
+  
+  [data-theme="dark"] body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+  }
+  
+  /* Enhanced glow effects for dark theme */
+  [data-theme="dark"] .glow-primary {
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+  }
+  
+  [data-theme="dark"] .glow-secondary {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+  }
+  
+  [data-theme="dark"] .glow-success {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+  }
+  
+  [data-theme="dark"] .glow-error {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  }
+  
+  /* S-rank hero special glow in dark theme */
+  [data-theme="dark"] .hero-card-s {
+    box-shadow: 
+      0 0 20px rgba(255, 212, 59, 0.3),
+      0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+  
+  [data-theme="dark"] .hero-card-s:hover {
+    box-shadow: 
+      0 0 30px rgba(255, 212, 59, 0.5),
+      0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Enhanced contrast for better readability */
+  [data-theme="dark"] .high-contrast {
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #e5e5e5;
+    --color-border: #555555;
+  }
+  
+  /* Dark theme selection */
+  [data-theme="dark"] ::selection {
+    background-color: var(--color-primary-500);
+    color: var(--color-text-inverse);
+  }
+  
+  [data-theme="dark"] ::-moz-selection {
+    background-color: var(--color-primary-500);
+    color: var(--color-text-inverse);
+  }
