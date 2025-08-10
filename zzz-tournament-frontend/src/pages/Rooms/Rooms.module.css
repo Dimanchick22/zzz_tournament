@@ -1,0 +1,314 @@
+/* Rooms Page Styles */
+
+.roomsPage {
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Header */
+  .header {
+    margin-bottom: var(--space-8);
+  }
+  
+  .headerContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+  
+  .headerText h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+  
+  .headerText p {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+  
+  .createButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-primary-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-colors);
+    white-space: nowrap;
+  }
+  
+  .createButton:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+  
+  .stat {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4);
+    text-align: center;
+    transition: var(--transition-all);
+  }
+  
+  .stat:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .statNumber {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary-500);
+    margin-bottom: var(--space-1);
+  }
+  
+  .statLabel {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.5px;
+  }
+  
+  /* Content */
+  .content {
+    min-height: 400px;
+  }
+  
+  /* Loading */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16);
+    gap: var(--space-4);
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
+    border-top: 3px solid var(--color-primary-500);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  .loading p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    margin: 0;
+  }
+  
+  /* Error */
+  .error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16);
+    gap: var(--space-4);
+    text-align: center;
+  }
+  
+  .error i {
+    font-size: var(--font-size-4xl);
+    color: var(--color-error);
+    margin-bottom: var(--space-2);
+  }
+  
+  .error h3 {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+  
+  .error p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+  }
+  
+  .retryButton {
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-primary-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-colors);
+  }
+  
+  .retryButton:hover {
+    background: var(--color-primary-hover);
+  }
+  
+  /* Empty State */
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16);
+    gap: var(--space-4);
+    text-align: center;
+  }
+  
+  .empty i {
+    font-size: var(--font-size-4xl);
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-2);
+  }
+  
+  .empty h3 {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+  
+  .empty p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-6);
+    max-width: 400px;
+  }
+  
+  /* Rooms Grid */
+  .roomsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+  
+  /* Pagination */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-xl);
+  }
+  
+  .paginationButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-colors);
+    font-size: var(--font-size-sm);
+  }
+  
+  .paginationButton:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-hover);
+  }
+  
+  .paginationButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .paginationInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .paginationTotal {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+  }
+  
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .roomsGrid {
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: var(--space-4);
+    }
+    
+    .headerContent {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+    
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .roomsGrid {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+    
+    .stats {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+    
+    .headerText h1 {
+      font-size: var(--font-size-2xl);
+    }
+    
+    .pagination {
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .paginationButton {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .roomsPage {
+      padding: 0 var(--space-3);
+    }
+    
+    .createButton {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .loading,
+    .error,
+    .empty {
+      padding: var(--space-8);
+    }
+  }

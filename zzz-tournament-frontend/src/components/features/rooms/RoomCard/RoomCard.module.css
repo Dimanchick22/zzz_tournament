@@ -1,0 +1,476 @@
+/* Room Card Styles */
+
+.roomCard {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    transition: var(--transition-all);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .roomCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-border-hover);
+  }
+  
+  .roomCard.inRoom {
+    border-color: var(--color-primary-500);
+    background: rgba(255, 107, 53, 0.05);
+  }
+  
+  .roomCard.inRoom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-primary-500);
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  
+  .roomInfo {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .roomName {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+  
+  .roomName i {
+    color: var(--color-warning);
+    font-size: var(--font-size-sm);
+  }
+  
+  .roomDescription {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  
+  /* Status */
+  .status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  
+  .status.warning {
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+  }
+  
+  .status.success {
+    background: var(--color-success-light);
+    color: var(--color-success);
+  }
+  
+  .status.secondary {
+    background: var(--color-surface-secondary);
+    color: var(--color-text-secondary);
+  }
+  
+  /* Participants */
+  .participants {
+    margin-bottom: var(--space-4);
+  }
+  
+  .participantCount {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .progressBar {
+    width: 100%;
+    height: 6px;
+    background: var(--color-surface-secondary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-3);
+  }
+  
+  .progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-400));
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+  }
+  
+  .participantList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-height: 120px;
+    overflow-y: auto;
+  }
+  
+  .participant {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2);
+    background: var(--color-surface-secondary);
+    border-radius: var(--radius-lg);
+    transition: var(--transition-colors);
+  }
+  
+  .participant:hover {
+    background: var(--color-surface-hover);
+  }
+  
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-sm);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .username {
+    flex: 1;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .username i {
+    color: var(--color-warning);
+    font-size: var(--font-size-xs);
+    flex-shrink: 0;
+  }
+  
+  .rating {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    font-weight: var(--font-weight-medium);
+    flex-shrink: 0;
+  }
+  
+  .moreParticipants {
+    text-align: center;
+    padding: var(--space-2);
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+  
+  /* Footer */
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  
+  .roomMeta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+  }
+  
+  .createdAt,
+  .host {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+  
+  .host i {
+    color: var(--color-warning);
+  }
+  
+  .actions {
+    display: flex;
+    gap: var(--space-2);
+  }
+  
+  .actionButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-colors);
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
+  }
+  
+  .actionButton.primary {
+    background: var(--color-primary-500);
+    color: white;
+  }
+  
+  .actionButton.primary:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .actionButton.secondary {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+  }
+  
+  .actionButton.secondary:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-hover);
+  }
+  
+  .actionButton.disabled {
+    background: var(--color-surface-tertiary);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+  
+  .actionButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Password Modal */
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    padding: var(--space-4);
+  }
+  
+  .modal {
+    background: var(--color-modal-bg);
+    border: 1px solid var(--color-modal-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2xl);
+    width: 100%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow: hidden;
+  }
+  
+  .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--color-divider);
+  }
+  
+  .modalHeader h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+  
+  .closeButton {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-colors);
+  }
+  
+  .closeButton:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+  }
+  
+  .modalForm {
+    padding: var(--space-6);
+  }
+  
+  .field {
+    margin-bottom: var(--space-4);
+  }
+  
+  .field label {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-sm);
+  }
+  
+  .field input {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-input-bg);
+    color: var(--color-input-text);
+    font-size: var(--font-size-base);
+    transition: var(--transition-colors);
+  }
+  
+  .field input:focus {
+    outline: none;
+    border-color: var(--color-input-border-focus);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  }
+  
+  .modalActions {
+    display: flex;
+    gap: var(--space-3);
+  }
+  
+  .cancelButton {
+    flex: 1;
+    padding: var(--space-3);
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-colors);
+  }
+  
+  .cancelButton:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-hover);
+  }
+  
+  .submitButton {
+    flex: 1;
+    padding: var(--space-3);
+    background: var(--color-primary-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-colors);
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .submitButton:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+  
+  .submitButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .roomCard {
+      padding: var(--space-4);
+    }
+    
+    .header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
+    
+    .footer {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
+    
+    .actions {
+      justify-content: stretch;
+    }
+    
+    .actionButton {
+      flex: 1;
+      justify-content: center;
+    }
+    
+    .participantList {
+      max-height: 80px;
+    }
+    
+    .modalOverlay {
+      padding: var(--space-2);
+    }
+    
+    .modal {
+      max-width: none;
+    }
+  }
