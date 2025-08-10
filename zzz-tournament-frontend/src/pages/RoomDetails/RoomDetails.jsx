@@ -1,3 +1,5 @@
+import { RoomDetailsView } from '@components/features/rooms/RoomDetailsView'
+
 export default function RoomDetails() {
-    return <div><h1>Детали комнаты</h1></div>
-  }
+  return <RoomDetailsView />
+}

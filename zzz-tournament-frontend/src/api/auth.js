@@ -18,17 +18,36 @@ export const registerUser = async (userData) => {
       password: userData.password
     })
 
-    return {
-      success: true,
-      data: response.data,
-      token: response.data.token,
-      user: response.data.user
+    // Обрабатываем стандартную структуру ответа бэкенда
+    if (response.data?.success && response.data?.data) {
+      const { token, user } = response.data.data
+
+      if (!token) {
+        return {
+          success: false,
+          error: 'Токен не получен от сервера'
+        }
+      }
+
+      return {
+        success: true,
+        data: response.data,
+        token: token,
+        user: user
+      }
     }
+
+    // Если структура ответа неожиданная
+    return {
+      success: false,
+      error: response.data?.message || 'Неожиданная структура ответа сервера'
+    }
+
   } catch (error) {
     return {
       success: false,
-      error: error.message || 'Ошибка регистрации',
-      details: error.details || []
+      error: error.response?.data?.message || error.message || 'Ошибка регистрации',
+      details: error.response?.data?.details || []
     }
   }
 }
@@ -47,17 +66,36 @@ export const loginUser = async (credentials) => {
       password: credentials.password
     })
 
-    return {
-      success: true,
-      data: response.data,
-      token: response.data.token,
-      user: response.data.user
+    // Обрабатываем стандартную структуру ответа бэкенда
+    if (response.data?.success && response.data?.data) {
+      const { token, user } = response.data.data
+
+      if (!token) {
+        return {
+          success: false,
+          error: 'Токен не получен от сервера'
+        }
+      }
+
+      return {
+        success: true,
+        data: response.data,
+        token: token,
+        user: user
+      }
     }
+
+    // Если структура ответа неожиданная
+    return {
+      success: false,
+      error: response.data?.message || 'Неожиданная структура ответа сервера'
+    }
+
   } catch (error) {
     return {
       success: false,
-      error: error.message || 'Ошибка входа в систему',
-      details: error.details || []
+      error: error.response?.data?.message || error.message || 'Ошибка входа в систему',
+      details: error.response?.data?.details || []
     }
   }
 }

@@ -1,0 +1,769 @@
+/* RoomDetails Styles */
+
+.roomDetails {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Loading */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16);
+    gap: var(--space-4);
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
+    border-top: 3px solid var(--color-primary-500);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  .loading p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    margin: 0;
+  }
+  
+  /* Error */
+  .error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-16);
+    gap: var(--space-4);
+    text-align: center;
+  }
+  
+  .error i {
+    font-size: var(--font-size-4xl);
+    color: var(--color-error);
+    margin-bottom: var(--space-2);
+  }
+  
+  .error h2 {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+  
+  .error p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-6);
+  }
+  
+  .backButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-primary-500);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    transition: var(--transition-colors);
+  }
+  
+  .backButton:hover {
+    background: var(--color-primary-hover);
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+  
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+  }
+  
+  .breadcrumb a {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    transition: var(--transition-colors);
+  }
+  
+  .breadcrumb a:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  .breadcrumb i {
+    font-size: var(--font-size-xs);
+  }
+  
+  .connectionStatus {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+  
+  .statusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+  }
+  
+  .statusDot.connected {
+    background: var(--color-success);
+  }
+  
+  .statusDot.disconnected {
+    background: var(--color-error);
+  }
+  
+  /* Room Info */
+  .roomInfo {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    gap: var(--space-6);
+    align-items: flex-start;
+  }
+  
+  .roomHeader {
+    flex: 1;
+  }
+  
+  .roomTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+  
+  .roomTitle h1 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+  
+  .roomTitle i {
+    color: var(--color-warning);
+    font-size: var(--font-size-lg);
+  }
+  
+  .status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  
+  .status.waiting {
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+  }
+  
+  .status.in_progress {
+    background: var(--color-success-light);
+    color: var(--color-success);
+  }
+  
+  .status.finished {
+    background: var(--color-surface-secondary);
+    color: var(--color-text-secondary);
+  }
+  
+  .roomDescription {
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--space-4);
+  }
+  
+  .roomMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  
+  .metaItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+  
+  .metaItem i {
+    color: var(--color-text-tertiary);
+    width: 16px;
+  }
+  
+  .progressContainer {
+    margin-top: var(--space-4);
+  }
+  
+  .progressBar {
+    width: 100%;
+    height: 8px;
+    background: var(--color-surface-secondary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+  }
+  
+  .progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-400));
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+  }
+  
+  /* Room Actions */
+  .roomActions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: stretch;
+    min-width: 200px;
+  }
+  
+  .joinButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-primary-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-colors);
+  }
+  
+  .joinButton:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+  
+  .joinButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .participantActions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .leaveButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: transparent;
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-colors);
+  }
+  
+  .leaveButton:hover:not(:disabled) {
+    background: var(--color-error-light);
+  }
+  
+  .startTournamentButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-success);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: var(--transition-colors);
+  }
+  
+  .startTournamentButton:hover:not(:disabled) {
+    background: var(--color-success-hover);
+  }
+  
+  .actionSpinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Participants */
+  .participants {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .participants h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-4);
+  }
+  
+  .participantsList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-4);
+  }
+  
+  .participantCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+    background: var(--color-surface-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: var(--transition-all);
+  }
+  
+  .participantCard:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border-hover);
+  }
+  
+  .participantInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+  }
+  
+  .participantAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-lg);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  
+  .participantAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .participantDetails {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .participantName {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-1);
+  }
+  
+  .hostBadge {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-2);
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .participantStats {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+  
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+  
+  .rating i {
+    color: var(--color-warning);
+  }
+  
+  .participantActions {
+    display: flex;
+    gap: var(--space-2);
+  }
+  
+  .kickButton {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--color-error);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-colors);
+  }
+  
+  .kickButton:hover {
+    background: var(--color-error-light);
+  }
+  
+  .emptyParticipants {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    gap: var(--space-3);
+    text-align: center;
+  }
+  
+  .emptyParticipants i {
+    font-size: var(--font-size-3xl);
+    color: var(--color-text-tertiary);
+  }
+  
+  .emptyParticipants p {
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+  
+  /* Tournament Status */
+  .tournamentStatus {
+    background: var(--color-success-light);
+    border: 1px solid var(--color-success);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+  }
+  
+  .tournamentInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  
+  .tournamentInfo i {
+    font-size: var(--font-size-2xl);
+    color: var(--color-success);
+  }
+  
+  .tournamentInfo h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-success);
+    margin-bottom: var(--space-1);
+  }
+  
+  .tournamentInfo p {
+    color: var(--color-success-dark);
+    margin: 0;
+  }
+  
+  .viewTournamentButton {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    background: var(--color-success);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-weight-medium);
+    transition: var(--transition-colors);
+    white-space: nowrap;
+  }
+  
+  .viewTournamentButton:hover {
+    background: var(--color-success-hover);
+  }
+  
+  /* Modal */
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    padding: var(--space-4);
+  }
+  
+  .modal {
+    background: var(--color-modal-bg);
+    border: 1px solid var(--color-modal-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2xl);
+    width: 100%;
+    max-width: 400px;
+    overflow: hidden;
+  }
+  
+  .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--color-divider);
+  }
+  
+  .modalHeader h3 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+  
+  .modalClose {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-colors);
+  }
+  
+  .modalClose:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+  }
+  
+  .modalForm {
+    padding: var(--space-6);
+  }
+  
+  .modalField {
+    margin-bottom: var(--space-4);
+  }
+  
+  .modalField label {
+    display: block;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-sm);
+  }
+  
+  .modalField input {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-input-bg);
+    color: var(--color-input-text);
+    font-size: var(--font-size-base);
+    transition: var(--transition-colors);
+  }
+  
+  .modalField input:focus {
+    outline: none;
+    border-color: var(--color-input-border-focus);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  }
+  
+  .modalActions {
+    display: flex;
+    gap: var(--space-3);
+  }
+  
+  .modalCancel {
+    flex: 1;
+    padding: var(--space-3);
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-colors);
+  }
+  
+  .modalCancel:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-hover);
+  }
+  
+  .modalSubmit {
+    flex: 1;
+    padding: var(--space-3);
+    background: var(--color-primary-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-colors);
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .modalSubmit:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+  
+  .modalSubmit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .roomInfo {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .roomActions {
+      min-width: auto;
+    }
+    
+    .participantsList {
+      grid-template-columns: 1fr;
+    }
+    
+    .tournamentStatus {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .roomDetails {
+      padding: 0 var(--space-3);
+    }
+    
+    .header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
+    
+    .roomInfo,
+    .participants {
+      padding: var(--space-4);
+    }
+    
+    .roomTitle {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
+    
+    .roomMeta {
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    
+    .participantCard {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+    }
+    
+    .participantInfo {
+      align-self: stretch;
+    }
+    
+    .participantActions {
+      align-self: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modalOverlay {
+      padding: var(--space-2);
+    }
+    
+    .modal {
+      max-width: none;
+    }
+    
+    .modalActions {
+      flex-direction: column;
+    }
+  }

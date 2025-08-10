@@ -35,18 +35,21 @@ export default function Rooms() {
     try {
       setLoading(true)
       setError(null)
-
+  
       const params = {
         page,
         limit: pagination.limit,
         ...(newFilters.search && { search: newFilters.search }),
         ...(newFilters.status !== 'all' && { status: newFilters.status })
       }
-
+  
       const result = await roomsAPI.getRooms(params)
-
+  
       if (result.success) {
-        setRooms(result.rooms || [])
+        // ИСПРАВЛЕНИЕ: убеждаемся что rooms это массив
+        const roomsArray = Array.isArray(result.rooms) ? result.rooms : []
+        setRooms(roomsArray)
+        
         setPagination(prev => ({
           ...prev,
           page,
@@ -55,6 +58,8 @@ export default function Rooms() {
         }))
       } else {
         setError(result.error)
+        // ИСПРАВЛЕНИЕ: при ошибке устанавливаем пустой массив
+        setRooms([])
         addNotification({
           type: 'error',
           title: 'Ошибка загрузки',
@@ -63,6 +68,8 @@ export default function Rooms() {
       }
     } catch (err) {
       setError('Не удалось загрузить комнаты')
+      // ИСПРАВЛЕНИЕ: при ошибке устанавливаем пустой массив
+      setRooms([])
       addNotification({
         type: 'error',
         title: 'Ошибка',
@@ -136,11 +143,11 @@ export default function Rooms() {
   }
 
   // Filter rooms by max players
-  const filteredRooms = rooms.filter(room => {
+  const filteredRooms = Array.isArray(rooms) ? rooms.filter(room => {
     if (filters.maxPlayers === 'all') return true
     const maxPlayers = parseInt(filters.maxPlayers)
     return room.max_players === maxPlayers
-  })
+  }) : []
 
   return (
     <div className={styles.roomsPage}>
@@ -177,13 +184,13 @@ export default function Rooms() {
         </div>
         <div className={styles.stat}>
           <span className={styles.statNumber}>
-            {rooms.filter(r => r.status === 'waiting').length}
+            {Array.isArray(rooms) ? rooms.filter(r => r.status === 'waiting').length : 0}
           </span>
           <span className={styles.statLabel}>Ожидают игроков</span>
         </div>
         <div className={styles.stat}>
           <span className={styles.statNumber}>
-            {rooms.filter(r => r.status === 'in_progress').length}
+            {Array.isArray(rooms) ? rooms.filter(r => r.status === 'in_progress').length : 0}
           </span>
           <span className={styles.statLabel}>В процессе</span>
         </div>

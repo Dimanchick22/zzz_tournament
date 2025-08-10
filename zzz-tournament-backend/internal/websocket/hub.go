@@ -1,4 +1,4 @@
-// internal/websocket/hub.go
+// internal/websocket/hub.go - исправленная версия
 package websocket
 
 import (
@@ -180,20 +180,70 @@ func (c *Client) writePump() {
 	}
 }
 
+// функция handleMessage с безопасными приведениями типов
 func (c *Client) handleMessage(msg models.WSMessage) {
+	// Проверяем что Data не nil
+	if msg.Data == nil {
+		log.Printf("Received message with nil data, type: %s", msg.Type)
+		return
+	}
+
+	// Безопасно приводим к map[string]interface{}
+	data, ok := msg.Data.(map[string]interface{})
+	if !ok {
+		log.Printf("Message data is not map[string]interface{}, type: %s", msg.Type)
+		return
+	}
+
 	switch msg.Type {
 	case "join_room":
-		data := msg.Data.(map[string]interface{})
-		roomID := int(data["room_id"].(float64))
+		roomIDRaw, exists := data["room_id"]
+		if !exists || roomIDRaw == nil {
+			log.Printf("join_room: room_id not found or nil")
+			return
+		}
+
+		roomIDFloat, ok := roomIDRaw.(float64)
+		if !ok {
+			log.Printf("join_room: room_id is not a number, got %T", roomIDRaw)
+			return
+		}
+
+		roomID := int(roomIDFloat)
+		log.Printf("Client %d joining room %d", c.UserID, roomID)
 		c.Hub.JoinRoom(c, roomID)
 
 	case "leave_room":
+		log.Printf("Client %d leaving room %d", c.UserID, c.RoomID)
 		c.Hub.LeaveRoom(c)
 
 	case "chat_message":
-		data := msg.Data.(map[string]interface{})
-		roomID := int(data["room_id"].(float64))
-		content := data["content"].(string)
+		roomIDRaw, roomExists := data["room_id"]
+		contentRaw, contentExists := data["content"]
+
+		if !roomExists || roomIDRaw == nil {
+			log.Printf("chat_message: room_id not found or nil")
+			return
+		}
+
+		if !contentExists || contentRaw == nil {
+			log.Printf("chat_message: content not found or nil")
+			return
+		}
+
+		roomIDFloat, ok := roomIDRaw.(float64)
+		if !ok {
+			log.Printf("chat_message: room_id is not a number, got %T", roomIDRaw)
+			return
+		}
+
+		content, ok := contentRaw.(string)
+		if !ok {
+			log.Printf("chat_message: content is not a string, got %T", contentRaw)
+			return
+		}
+
+		roomID := int(roomIDFloat)
 
 		// TODO: Save message to database and broadcast to room
 		response := models.WSMessage{
@@ -205,7 +255,30 @@ func (c *Client) handleMessage(msg models.WSMessage) {
 			},
 		}
 
-		responseBytes, _ := json.Marshal(response)
+		responseBytes, err := json.Marshal(response)
+		if err != nil {
+			log.Printf("Error marshaling chat message response: %v", err)
+			return
+		}
+
 		c.Hub.BroadcastToRoom(roomID, responseBytes)
+
+	case "heartbeat":
+		// Отвечаем на heartbeat
+		response := models.WSMessage{
+			Type: "heartbeat",
+			Data: map[string]interface{}{
+				"timestamp": msg.Data,
+			},
+		}
+		responseBytes, _ := json.Marshal(response)
+		select {
+		case c.Send <- responseBytes:
+		default:
+			log.Printf("Failed to send heartbeat response to client %d", c.UserID)
+		}
+
+	default:
+		log.Printf("Unknown message type: %s from client %d", msg.Type, c.UserID)
 	}
 }
