@@ -28,7 +28,13 @@
       "viewAll": "Посмотреть все",
       "findGame": "Найти игру",
       "of": "из",
-      "total": "всего"
+      "total": "всего",
+      "new": "Новое",
+      "refresh": "Обновить",
+      "retry": "Повторить",
+      "settings": "Настройки",
+      "clear": "Очистить",
+      "optional": "необязательно"
     },
     
     "auth": {
@@ -55,20 +61,31 @@
       "weakPassword": "Слишком слабый пароль",
       "passwordMismatch": "Пароли не совпадают",
       "sessionExpired": "Сессия истекла",
-      "accessDenied": "Доступ запрещен"
+      "accessDenied": "Доступ запрещен",
+      "loggingIn": "Выполняется вход...",
+      "registering": "Создание аккаунта...",
+      "checking": "Проверка авторизации...",
+      "noAccount": "Нет аккаунта?",
+      "haveAccount": "Уже есть аккаунт?",
+      "createAccount": "Создать аккаунт",
+      "usernameHint": "Только буквы, цифры, _ и -",
+      "passwordHint": "Минимум 6 символов",
+      "termsAccept": "Я принимаю условия использования",
+      "privacyAccept": "Я согласен с политикой конфиденциальности"
     },
     
     "navigation": {
       "dashboard": "Дашборд",
       "rooms": "Комнаты",
-      "heroes": "Герои",
+      "heroes": "Герои", 
       "tournaments": "Турниры",
       "leaderboard": "Рейтинг",
       "profile": "Профиль",
       "settings": "Настройки",
       "home": "Главная",
       "about": "О проекте",
-      "help": "Помощь"
+      "help": "Помощь",
+      "admin": "Админ"
     },
     
     "dashboard": {
@@ -103,6 +120,16 @@
       "participants": "Участники",
       "maxPlayers": "Максимум игроков",
       "currentPlayers": "Текущие игроки",
+      "searchPlaceholder": "Поиск комнат...",
+      "host": "Хост",
+      "kick": "Исключить",
+      "transferHost": "Передать права хоста",
+      "startTournament": "Запустить турнир",
+      "noRooms": "Комнаты не найдены",
+      "loadingRooms": "Загружаем комнаты...",
+      "errorLoading": "Ошибка загрузки комнат",
+      "noRoomsWithFilters": "Попробуйте изменить параметры поиска",
+      "noRoomsAvailable": "Пока нет доступных комнат. Создайте первую!",
       "roomStatus": {
         "waiting": "Ожидание игроков",
         "inProgress": "В процессе",
@@ -113,18 +140,40 @@
         "waiting": "Ожидают игроков", 
         "inProgress": "В процессе",
         "finished": "Завершенные",
-        "anySize": "Любой размер"
+        "anySize": "Любой размер",
+        "status": "Статус",
+        "size": "Размер",
+        "players": "{{count}} игроков",
+        "players_one": "{{count}} игрок",
+        "players_few": "{{count}} игрока",
+        "players_many": "{{count}} игроков",
+        "clearAll": "Очистить фильтры",
+        "activeFilters": "Активные фильтры",
+        "searchTag": "Поиск"
+      },
+      "sort": {
+        "byDate": "По дате создания",
+        "byName": "По названию",
+        "byParticipants": "По количеству игроков",
+        "bySize": "По размеру комнаты"
       },
       "create": {
         "title": "Создать комнату",
         "name": "Название комнаты",
+        "namePlaceholder": "Введите название комнаты",
         "description": "Описание",
+        "descriptionPlaceholder": "Описание комнаты (необязательно)",
         "maxPlayersLabel": "Максимальное количество игроков",
         "isPrivate": "Приватная комната",
         "password": "Пароль",
-        "passwordHint": "Для приватных комнат",
+        "passwordPlaceholder": "Введите пароль",
+        "passwordRequired": "Пароль обязателен для приватной комнаты",
+        "privateHint": "Приватные комнаты требуют пароль для входа",
         "createSuccess": "Комната создана успешно",
-        "createError": "Ошибка создания комнаты"
+        "createError": "Ошибка создания комнаты",
+        "creating": "Создание",
+        "minPlayers": "Минимум 2 игрока",
+        "maxPlayers": "Максимум 16 игроков"
       },
       "join": {
         "enterPassword": "Введите пароль",
@@ -132,19 +181,17 @@
         "joinError": "Ошибка присоединения",
         "roomFull": "Комната заполнена",
         "wrongPassword": "Неверный пароль"
-      },
-      "host": "Хост",
-      "kick": "Исключить",
-      "transferHost": "Передать права хоста",
-      "startTournament": "Запустить турнир",
-      "noRooms": "Комнаты не найдены",
-      "loadingRooms": "Загружаем комнаты...",
-      "errorLoading": "Ошибка загрузки комнат"
+      }
     },
     
     "heroes": {
       "title": "Герои ZZZ",
       "subtitle": "Изучите всех доступных героев и их способности",
+      "stats": "Характеристики",
+      "abilities": "Способности",
+      "builds": "Сборки",
+      "noHeroes": "Герои не найдены",
+      "loadingHeroes": "Загружаем героев...",
       "elements": {
         "Physical": "Физический",
         "Fire": "Огонь", 
@@ -167,12 +214,7 @@
         "allElements": "Все элементы",
         "allRarities": "Все редкости", 
         "allRoles": "Все роли"
-      },
-      "stats": "Характеристики",
-      "abilities": "Способности",
-      "builds": "Сборки",
-      "noHeroes": "Герои не найдены",
-      "loadingHeroes": "Загружаем героев..."
+      }
     },
     
     "tournaments": {
@@ -184,6 +226,12 @@
       "quarterfinals": "Четвертьфинал",
       "winner": "Победитель",
       "champion": "Чемпион",
+      "participants": "Участники",
+      "prize": "Приз",
+      "registrationDeadline": "Дедлайн регистрации",
+      "startTournament": "Запустить турнир",
+      "tournamentStarted": "Турнир начался!",
+      "noTournaments": "Турниры не найдены",
       "status": {
         "upcoming": "Предстоящий",
         "ongoing": "Идет",
@@ -193,13 +241,7 @@
         "vs": "против",
         "result": "Результат",
         "submitResult": "Отправить результат"
-      },
-      "participants": "Участники",
-      "prize": "Приз",
-      "registrationDeadline": "Дедлайн регистрации",
-      "startTournament": "Запустить турнир",
-      "tournamentStarted": "Турнир начался!",
-      "noTournaments": "Турниры не найдены"
+      }
     },
     
     "leaderboard": {
@@ -227,7 +269,6 @@
       "statistics": "Статистика",
       "matchHistory": "История матчей",
       "achievements": "Достижения",
-      "settings": "Настройки",
       "language": "Язык",
       "theme": "Тема",
       "notifications": "Уведомления",
@@ -242,7 +283,10 @@
       "unknownError": "Неизвестная ошибка",
       "tryAgain": "Попробовать снова",
       "goHome": "На главную",
-      "contactSupport": "Обратиться в поддержку"
+      "contactSupport": "Обратиться в поддержку",
+      "notFound": "Не найдено",
+      "loadingError": "Ошибка загрузки",
+      "connectionError": "Ошибка соединения"
     },
     
     "validation": {
@@ -253,16 +297,44 @@
       "passwordMismatch": "Пароли не совпадают",
       "invalidFormat": "Неверный формат",
       "tooShort": "Слишком короткое значение",
-      "tooLong": "Слишком длинное значение"
+      "tooLong": "Слишком длинное значение",
+      "invalidUsername": "Неверный формат имени пользователя",
+      "invalidEmail": "Неверный формат email"
     },
     
     "time": {
       "now": "сейчас",
       "minutesAgo": "{{count}} мин. назад",
-      "hoursAgo": "{{count}} ч. назад", 
+      "minutesAgo_one": "{{count}} минуту назад",
+      "minutesAgo_few": "{{count}} минуты назад",
+      "minutesAgo_many": "{{count}} минут назад",
+      "hoursAgo": "{{count}} ч. назад",
+      "hoursAgo_one": "{{count}} час назад", 
+      "hoursAgo_few": "{{count}} часа назад",
+      "hoursAgo_many": "{{count}} часов назад",
       "daysAgo": "{{count}} дн. назад",
+      "daysAgo_one": "{{count}} день назад",
+      "daysAgo_few": "{{count}} дня назад", 
+      "daysAgo_many": "{{count}} дней назад",
       "weeksAgo": "{{count}} нед. назад",
+      "weeksAgo_one": "{{count}} неделю назад",
+      "weeksAgo_few": "{{count}} недели назад",
+      "weeksAgo_many": "{{count}} недель назад",
       "monthsAgo": "{{count}} мес. назад",
-      "yearsAgo": "{{count}} лет назад"
+      "monthsAgo_one": "{{count}} месяц назад",
+      "monthsAgo_few": "{{count}} месяца назад",
+      "monthsAgo_many": "{{count}} месяцев назад",
+      "yearsAgo": "{{count}} лет назад",
+      "yearsAgo_one": "{{count}} год назад",
+      "yearsAgo_few": "{{count}} года назад",
+      "yearsAgo_many": "{{count}} лет назад"
+    },
+    
+    "pagination": {
+      "pageOf": "Страница {{current}} из {{total}}",
+      "totalItems": "{{count}} элементов",
+      "totalItems_one": "{{count}} элемент",
+      "totalItems_few": "{{count}} элемента",
+      "totalItems_many": "{{count}} элементов"
     }
   }

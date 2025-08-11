@@ -1,9 +1,11 @@
-// RoomFilters.jsx - Компонент фильтрации комнат
+// RoomFilters.jsx - Компонент фильтрации комнат с переводами
 import { useState, useEffect } from 'react'
 import { useDebounce } from '@hooks/useDebounce'
+import { useI18n } from '@hooks/useI18n'
 import styles from './RoomFilters.module.css'
 
 export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
+  const { t } = useI18n()
   const [searchTerm, setSearchTerm] = useState(filters.search || '')
   const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
@@ -47,7 +49,7 @@ export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
             <i className="fas fa-search" />
             <input
               type="text"
-              placeholder="Поиск комнат..."
+              placeholder={t('rooms.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               disabled={loading}
@@ -57,6 +59,7 @@ export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
                 className={styles.clearSearch}
                 onClick={() => setSearchTerm('')}
                 type="button"
+                title={t('common.clear')}
               >
                 <i className="fas fa-times" />
               </button>
@@ -69,47 +72,47 @@ export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
       <div className={styles.filterControls}>
         {/* Status Filter */}
         <div className={styles.filterGroup}>
-          <label>Статус</label>
+          <label>{t('rooms.filters.status')}</label>
           <select
             value={filters.status}
             onChange={(e) => handleFilterChange('status', e.target.value)}
             disabled={loading}
           >
-            <option value="all">Все комнаты</option>
-            <option value="waiting">Ожидают игроков</option>
-            <option value="in_progress">В процессе</option>
-            <option value="finished">Завершенные</option>
+            <option value="all">{t('rooms.filters.all')}</option>
+            <option value="waiting">{t('rooms.filters.waiting')}</option>
+            <option value="in_progress">{t('rooms.filters.inProgress')}</option>
+            <option value="finished">{t('rooms.filters.finished')}</option>
           </select>
         </div>
 
         {/* Max Players Filter */}
         <div className={styles.filterGroup}>
-          <label>Размер</label>
+          <label>{t('rooms.filters.size')}</label>
           <select
             value={filters.maxPlayers}
             onChange={(e) => handleFilterChange('maxPlayers', e.target.value)}
             disabled={loading}
           >
-            <option value="all">Любой размер</option>
-            <option value="2">2 игрока</option>
-            <option value="4">4 игрока</option>
-            <option value="8">8 игроков</option>
-            <option value="16">16 игроков</option>
+            <option value="all">{t('rooms.filters.anySize')}</option>
+            <option value="2">{t('rooms.filters.players', { count: 2 })}</option>
+            <option value="4">{t('rooms.filters.players', { count: 4 })}</option>
+            <option value="8">{t('rooms.filters.players', { count: 8 })}</option>
+            <option value="16">{t('rooms.filters.players', { count: 16 })}</option>
           </select>
         </div>
 
         {/* Sort */}
         <div className={styles.filterGroup}>
-          <label>Сортировка</label>
+          <label>{t('common.sort')}</label>
           <select
             value={filters.sortBy || 'created_at'}
             onChange={(e) => handleFilterChange('sortBy', e.target.value)}
             disabled={loading}
           >
-            <option value="created_at">По дате создания</option>
-            <option value="name">По названию</option>
-            <option value="participants">По количеству игроков</option>
-            <option value="max_players">По размеру комнаты</option>
+            <option value="created_at">{t('rooms.sort.byDate')}</option>
+            <option value="name">{t('rooms.sort.byName')}</option>
+            <option value="participants">{t('rooms.sort.byParticipants')}</option>
+            <option value="max_players">{t('rooms.sort.bySize')}</option>
           </select>
         </div>
 
@@ -119,9 +122,10 @@ export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
             className={styles.clearButton}
             onClick={clearFilters}
             disabled={loading}
+            title={t('rooms.filters.clearAll')}
           >
             <i className="fas fa-times" />
-            Очистить фильтры
+            {t('rooms.filters.clearAll')}
           </button>
         )}
       </div>
@@ -129,11 +133,11 @@ export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
       {/* Active Filters Display */}
       {hasActiveFilters && (
         <div className={styles.activeFilters}>
-          <span className={styles.activeFiltersLabel}>Активные фильтры:</span>
+          <span className={styles.activeFiltersLabel}>{t('rooms.filters.activeFilters')}:</span>
           
           {filters.search && (
             <div className={styles.filterTag}>
-              <span>Поиск: "{filters.search}"</span>
+              <span>{t('rooms.filters.searchTag')}: "{filters.search}"</span>
               <button onClick={() => {
                 setSearchTerm('')
                 handleFilterChange('search', '')
@@ -145,7 +149,7 @@ export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
           
           {filters.status !== 'all' && (
             <div className={styles.filterTag}>
-              <span>Статус: {getStatusLabel(filters.status)}</span>
+              <span>{t('rooms.filters.status')}: {getStatusLabel(filters.status, t)}</span>
               <button onClick={() => handleFilterChange('status', 'all')}>
                 <i className="fas fa-times" />
               </button>
@@ -154,7 +158,7 @@ export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
           
           {filters.maxPlayers !== 'all' && (
             <div className={styles.filterTag}>
-              <span>Размер: {filters.maxPlayers} игроков</span>
+              <span>{t('rooms.filters.size')}: {t('rooms.filters.players', { count: filters.maxPlayers })}</span>
               <button onClick={() => handleFilterChange('maxPlayers', 'all')}>
                 <i className="fas fa-times" />
               </button>
@@ -167,11 +171,11 @@ export const RoomFilters = ({ filters, onFilterChange, onSearch, loading }) => {
 }
 
 // Helper function to get status label
-const getStatusLabel = (status) => {
+const getStatusLabel = (status, t) => {
   switch (status) {
-    case 'waiting': return 'Ожидают игроков'
-    case 'in_progress': return 'В процессе'
-    case 'finished': return 'Завершенные'
+    case 'waiting': return t('rooms.filters.waiting')
+    case 'in_progress': return t('rooms.filters.inProgress')
+    case 'finished': return t('rooms.filters.finished')
     default: return status
   }
 }

@@ -1,5 +1,6 @@
-// src/components/layout/Header/Header.jsx
+// src/components/layout/Header/Header.jsx - обновленная версия с переводами
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@store/authStore'
 import { useUIStore } from '@store/uiStore'
 import { useAuth } from '@hooks/useAuth'
@@ -12,10 +13,22 @@ export const Header = () => {
   const { theme, toggleTheme, toggleSidebar, isMobile } = useUIStore()
   const { logout } = useAuth()
   const { t } = useI18n()
+  const navigate = useNavigate()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
+    setUserMenuOpen(false)
+  }
+
+  const navigateToProfile = () => {
+    navigate('/profile')
+    setUserMenuOpen(false)
+  }
+
+  const navigateToSettings = () => {
+    // TODO: Создать страницу настроек
+    console.log('Navigate to settings')
     setUserMenuOpen(false)
   }
 
@@ -27,6 +40,7 @@ export const Header = () => {
           className={styles.sidebarToggle}
           onClick={toggleSidebar}
           aria-label={t('common.toggleSidebar')}
+          title={t('common.toggleSidebar')}
         >
           <i className="fas fa-bars" />
         </button>
@@ -46,7 +60,7 @@ export const Header = () => {
           className={styles.themeToggle}
           onClick={toggleTheme}
           aria-label={t('common.toggleTheme')}
-          title={t('profile.theme')}
+          title={t('common.toggleTheme')}
         >
           <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`} />
         </button>
@@ -100,10 +114,7 @@ export const Header = () => {
               
               <button 
                 className={styles.menuItem}
-                onClick={() => {
-                  setUserMenuOpen(false)
-                  // Navigate to profile
-                }}
+                onClick={navigateToProfile}
               >
                 <i className="fas fa-user" />
                 {t('navigation.profile')}
@@ -111,10 +122,7 @@ export const Header = () => {
               
               <button 
                 className={styles.menuItem}
-                onClick={() => {
-                  setUserMenuOpen(false)
-                  // Navigate to settings
-                }}
+                onClick={navigateToSettings}
               >
                 <i className="fas fa-cog" />
                 {t('navigation.settings')}

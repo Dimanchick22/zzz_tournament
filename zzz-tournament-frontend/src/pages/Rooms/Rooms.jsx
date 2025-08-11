@@ -1,8 +1,9 @@
-// Rooms Page - Полная реализация с API интеграцией
+// Rooms Page - Полная реализация с переводами
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '@store/authStore'
 import { useUIStore } from '@store/uiStore'
+import { useI18n } from '@hooks/useI18n'
 import { roomsAPI } from '@api/rooms'
 import { CreateRoomModal } from '@components/features/rooms/CreateRoomModal'
 import { RoomCard } from '@components/features/rooms/RoomCard'
@@ -12,6 +13,7 @@ import styles from './Rooms.module.css'
 export default function Rooms() {
   const { user } = useAuthStore()
   const { addNotification } = useUIStore()
+  const { t } = useI18n()
   
   // State
   const [rooms, setRooms] = useState([])
@@ -46,7 +48,6 @@ export default function Rooms() {
       const result = await roomsAPI.getRooms(params)
   
       if (result.success) {
-        // ИСПРАВЛЕНИЕ: убеждаемся что rooms это массив
         const roomsArray = Array.isArray(result.rooms) ? result.rooms : []
         setRooms(roomsArray)
         
@@ -58,22 +59,20 @@ export default function Rooms() {
         }))
       } else {
         setError(result.error)
-        // ИСПРАВЛЕНИЕ: при ошибке устанавливаем пустой массив
         setRooms([])
         addNotification({
           type: 'error',
-          title: 'Ошибка загрузки',
+          title: t('errors.loadingError'),
           message: result.error
         })
       }
     } catch (err) {
-      setError('Не удалось загрузить комнаты')
-      // ИСПРАВЛЕНИЕ: при ошибке устанавливаем пустой массив
+      setError(t('rooms.errorLoading'))
       setRooms([])
       addNotification({
         type: 'error',
-        title: 'Ошибка',
-        message: 'Не удалось загрузить комнаты'
+        title: t('common.error'),
+        message: t('rooms.errorLoading')
       })
     } finally {
       setLoading(false)
@@ -110,23 +109,23 @@ export default function Rooms() {
       if (result.success) {
         addNotification({
           type: 'success',
-          title: 'Успешно!',
-          message: result.message
+          title: t('common.success'),
+          message: result.message || t('rooms.join.joinSuccess')
         })
         // Refresh rooms list
         loadRooms(pagination.page)
       } else {
         addNotification({
           type: 'error',
-          title: 'Ошибка присоединения',
+          title: t('rooms.join.joinError'),
           message: result.error
         })
       }
     } catch (err) {
       addNotification({
         type: 'error',
-        title: 'Ошибка',
-        message: 'Не удалось присоединиться к комнате'
+        title: t('common.error'),
+        message: t('rooms.join.joinError')
       })
     }
   }
@@ -135,8 +134,8 @@ export default function Rooms() {
   const handleRoomCreated = (newRoom) => {
     addNotification({
       type: 'success',
-      title: 'Комната создана!',
-      message: `Комната "${newRoom.name}" успешно создана`
+      title: t('rooms.create.createSuccess'),
+      message: t('rooms.create.createSuccess')
     })
     setShowCreateModal(false)
     loadRooms(pagination.page)
@@ -149,21 +148,24 @@ export default function Rooms() {
     return room.max_players === maxPlayers
   }) : []
 
+  const waitingRoomsCount = Array.isArray(rooms) ? rooms.filter(r => r.status === 'waiting').length : 0
+  const inProgressRoomsCount = Array.isArray(rooms) ? rooms.filter(r => r.status === 'in_progress').length : 0
+
   return (
     <div className={styles.roomsPage}>
       {/* Header */}
       <div className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.headerText}>
-            <h1>Игровые комнаты</h1>
-            <p>Присоединяйтесь к существующим комнатам или создайте свою</p>
+            <h1>{t('rooms.title')}</h1>
+            <p>{t('rooms.subtitle')}</p>
           </div>
           <button 
             className={styles.createButton}
             onClick={() => setShowCreateModal(true)}
           >
             <i className="fas fa-plus" />
-            Создать комнату
+            {t('rooms.createRoom')}
           </button>
         </div>
       </div>
@@ -180,19 +182,15 @@ export default function Rooms() {
       <div className={styles.stats}>
         <div className={styles.stat}>
           <span className={styles.statNumber}>{pagination.total}</span>
-          <span className={styles.statLabel}>Всего комнат</span>
+          <span className={styles.statLabel}>{t('rooms.filters.all')}</span>
         </div>
         <div className={styles.stat}>
-          <span className={styles.statNumber}>
-            {Array.isArray(rooms) ? rooms.filter(r => r.status === 'waiting').length : 0}
-          </span>
-          <span className={styles.statLabel}>Ожидают игроков</span>
+          <span className={styles.statNumber}>{waitingRoomsCount}</span>
+          <span className={styles.statLabel}>{t('rooms.filters.waiting')}</span>
         </div>
         <div className={styles.stat}>
-          <span className={styles.statNumber}>
-            {Array.isArray(rooms) ? rooms.filter(r => r.status === 'in_progress').length : 0}
-          </span>
-          <span className={styles.statLabel}>В процессе</span>
+          <span className={styles.statNumber}>{inProgressRoomsCount}</span>
+          <span className={styles.statLabel}>{t('rooms.filters.inProgress')}</span>
         </div>
       </div>
 
@@ -201,20 +199,20 @@ export default function Rooms() {
         {loading && (
           <div className={styles.loading}>
             <div className={styles.spinner} />
-            <p>Загружаем комнаты...</p>
+            <p>{t('rooms.loadingRooms')}</p>
           </div>
         )}
 
         {error && !loading && (
           <div className={styles.error}>
             <i className="fas fa-exclamation-triangle" />
-            <h3>Ошибка загрузки</h3>
+            <h3>{t('errors.loadingError')}</h3>
             <p>{error}</p>
             <button 
               className={styles.retryButton}
               onClick={() => loadRooms(pagination.page)}
             >
-              Попробовать снова
+              {t('common.retry')}
             </button>
           </div>
         )}
@@ -222,18 +220,18 @@ export default function Rooms() {
         {!loading && !error && filteredRooms.length === 0 && (
           <div className={styles.empty}>
             <i className="fas fa-inbox" />
-            <h3>Комнаты не найдены</h3>
+            <h3>{t('rooms.noRooms')}</h3>
             <p>
               {filters.search ? 
-                'Попробуйте изменить параметры поиска' : 
-                'Пока нет доступных комнат. Создайте первую!'
+                t('rooms.noRoomsWithFilters') : 
+                t('rooms.noRoomsAvailable')
               }
             </p>
             <button 
               className={styles.createButton}
               onClick={() => setShowCreateModal(true)}
             >
-              Создать комнату
+              {t('rooms.createRoom')}
             </button>
           </div>
         )}
@@ -261,15 +259,18 @@ export default function Rooms() {
                   disabled={pagination.page === 1}
                 >
                   <i className="fas fa-chevron-left" />
-                  Назад
+                  {t('common.previous')}
                 </button>
                 
                 <div className={styles.paginationInfo}>
                   <span>
-                    Страница {pagination.page} из {pagination.totalPages}
+                    {t('pagination.pageOf', {
+                      current: pagination.page,
+                      total: pagination.totalPages
+                    })}
                   </span>
                   <span className={styles.paginationTotal}>
-                    ({pagination.total} комнат)
+                    ({t('pagination.totalItems', { count: pagination.total })})
                   </span>
                 </div>
                 
@@ -278,7 +279,7 @@ export default function Rooms() {
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page === pagination.totalPages}
                 >
-                  Вперед
+                  {t('common.next')}
                   <i className="fas fa-chevron-right" />
                 </button>
               </div>

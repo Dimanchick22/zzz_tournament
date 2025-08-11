@@ -28,7 +28,13 @@
       "viewAll": "View all",
       "findGame": "Find game",
       "of": "of",
-      "total": "total"
+      "total": "total",
+      "new": "New",
+      "refresh": "Refresh",
+      "retry": "Retry",
+      "settings": "Settings",
+      "clear": "Clear",
+      "optional": "optional"
     },
     
     "auth": {
@@ -55,7 +61,17 @@
       "weakPassword": "Password too weak",
       "passwordMismatch": "Passwords don't match",
       "sessionExpired": "Session expired",
-      "accessDenied": "Access denied"
+      "accessDenied": "Access denied",
+      "loggingIn": "Logging in...",
+      "registering": "Creating account...",
+      "checking": "Checking authorization...",
+      "noAccount": "Don't have an account?",
+      "haveAccount": "Already have an account?",
+      "createAccount": "Create Account",
+      "usernameHint": "Letters, numbers, _ and - only",
+      "passwordHint": "Minimum 6 characters",
+      "termsAccept": "I accept the terms of service",
+      "privacyAccept": "I agree to the privacy policy"
     },
     
     "navigation": {
@@ -68,7 +84,8 @@
       "settings": "Settings",
       "home": "Home",
       "about": "About",
-      "help": "Help"
+      "help": "Help",
+      "admin": "Admin"
     },
     
     "dashboard": {
@@ -103,6 +120,16 @@
       "participants": "Participants",
       "maxPlayers": "Max Players",
       "currentPlayers": "Current Players",
+      "searchPlaceholder": "Search rooms...",
+      "host": "Host",
+      "kick": "Kick",
+      "transferHost": "Transfer Host",
+      "startTournament": "Start Tournament",
+      "noRooms": "No rooms found",
+      "loadingRooms": "Loading rooms...",
+      "errorLoading": "Error loading rooms",
+      "noRoomsWithFilters": "Try changing your search parameters",
+      "noRoomsAvailable": "No rooms available yet. Create the first one!",
       "roomStatus": {
         "waiting": "Waiting for players",
         "inProgress": "In Progress",
@@ -113,18 +140,37 @@
         "waiting": "Waiting for Players",
         "inProgress": "In Progress",
         "finished": "Finished",
-        "anySize": "Any Size"
+        "anySize": "Any Size",
+        "status": "Status",
+        "size": "Size",
+        "players": "{{count}} players",
+        "clearAll": "Clear Filters",
+        "activeFilters": "Active Filters",
+        "searchTag": "Search"
+      },
+      "sort": {
+        "byDate": "By Creation Date",
+        "byName": "By Name",
+        "byParticipants": "By Player Count",
+        "bySize": "By Room Size"
       },
       "create": {
         "title": "Create Room",
         "name": "Room Name",
+        "namePlaceholder": "Enter room name",
         "description": "Description",
+        "descriptionPlaceholder": "Room description (optional)",
         "maxPlayersLabel": "Maximum Players",
         "isPrivate": "Private Room",
         "password": "Password",
-        "passwordHint": "For private rooms",
+        "passwordPlaceholder": "Enter password",
+        "passwordRequired": "Password is required for private rooms",
+        "privateHint": "Private rooms require a password to join",
         "createSuccess": "Room created successfully",
-        "createError": "Error creating room"
+        "createError": "Error creating room",
+        "creating": "Creating",
+        "minPlayers": "Minimum 2 players",
+        "maxPlayers": "Maximum 16 players"
       },
       "join": {
         "enterPassword": "Enter Password",
@@ -132,19 +178,17 @@
         "joinError": "Error joining room",
         "roomFull": "Room is full",
         "wrongPassword": "Wrong password"
-      },
-      "host": "Host",
-      "kick": "Kick",
-      "transferHost": "Transfer Host",
-      "startTournament": "Start Tournament",
-      "noRooms": "No rooms found",
-      "loadingRooms": "Loading rooms...",
-      "errorLoading": "Error loading rooms"
+      }
     },
     
     "heroes": {
       "title": "ZZZ Heroes",
       "subtitle": "Explore all available heroes and their abilities",
+      "stats": "Stats",
+      "abilities": "Abilities",
+      "builds": "Builds",
+      "noHeroes": "No heroes found",
+      "loadingHeroes": "Loading heroes...",
       "elements": {
         "Physical": "Physical",
         "Fire": "Fire",
@@ -167,12 +211,7 @@
         "allElements": "All Elements",
         "allRarities": "All Rarities",
         "allRoles": "All Roles"
-      },
-      "stats": "Stats",
-      "abilities": "Abilities",
-      "builds": "Builds",
-      "noHeroes": "No heroes found",
-      "loadingHeroes": "Loading heroes..."
+      }
     },
     
     "tournaments": {
@@ -184,6 +223,12 @@
       "quarterfinals": "Quarterfinals",
       "winner": "Winner",
       "champion": "Champion",
+      "participants": "Participants",
+      "prize": "Prize",
+      "registrationDeadline": "Registration Deadline",
+      "startTournament": "Start Tournament",
+      "tournamentStarted": "Tournament started!",
+      "noTournaments": "No tournaments found",
       "status": {
         "upcoming": "Upcoming",
         "ongoing": "Ongoing",
@@ -193,13 +238,7 @@
         "vs": "vs",
         "result": "Result",
         "submitResult": "Submit Result"
-      },
-      "participants": "Participants",
-      "prize": "Prize",
-      "registrationDeadline": "Registration Deadline",
-      "startTournament": "Start Tournament",
-      "tournamentStarted": "Tournament started!",
-      "noTournaments": "No tournaments found"
+      }
     },
     
     "leaderboard": {
@@ -227,7 +266,6 @@
       "statistics": "Statistics",
       "matchHistory": "Match History",
       "achievements": "Achievements",
-      "settings": "Settings",
       "language": "Language",
       "theme": "Theme",
       "notifications": "Notifications",
@@ -242,7 +280,10 @@
       "unknownError": "Unknown Error",
       "tryAgain": "Try Again",
       "goHome": "Go Home",
-      "contactSupport": "Contact Support"
+      "contactSupport": "Contact Support",
+      "notFound": "Not Found",
+      "loadingError": "Loading Error",
+      "connectionError": "Connection Error"
     },
     
     "validation": {
@@ -253,7 +294,9 @@
       "passwordMismatch": "Passwords don't match",
       "invalidFormat": "Invalid format",
       "tooShort": "Value too short",
-      "tooLong": "Value too long"
+      "tooLong": "Value too long",
+      "invalidUsername": "Invalid username format",
+      "invalidEmail": "Invalid email format"
     },
     
     "time": {
@@ -264,5 +307,10 @@
       "weeksAgo": "{{count}} w ago",
       "monthsAgo": "{{count}} mo ago",
       "yearsAgo": "{{count}} y ago"
+    },
+    
+    "pagination": {
+      "pageOf": "Page {{current}} of {{total}}",
+      "totalItems": "{{count}} items"
     }
   }

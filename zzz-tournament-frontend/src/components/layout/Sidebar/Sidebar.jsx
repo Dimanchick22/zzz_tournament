@@ -1,14 +1,40 @@
-// Sidebar Component
+// Sidebar Component с поддержкой переводов
 import { NavLink, useLocation } from 'react-router-dom'
 import { useUIStore } from '@store/uiStore'
+import { useI18n } from '@hooks/useI18n'
 import { NAVIGATION } from '@config/routes'
 import styles from './Sidebar.module.css'
 
 export const Sidebar = () => {
   const { sidebarCollapsed, isMobile } = useUIStore()
+  const { t } = useI18n()
   const location = useLocation()
 
-  const navigationItems = NAVIGATION.main
+  // Навигационные элементы с переводами
+  const navigationItems = [
+    {
+      path: '/dashboard',
+      label: t('navigation.dashboard'),
+      icon: 'dashboard',
+      exact: true
+    },
+    {
+      path: '/rooms',
+      label: t('navigation.rooms'),
+      icon: 'users',
+      badge: 'new'
+    },
+    {
+      path: '/heroes',
+      label: t('navigation.heroes'),
+      icon: 'sword'
+    },
+    {
+      path: '/leaderboard',
+      label: t('navigation.leaderboard'),
+      icon: 'trophy'
+    }
+  ]
 
   return (
     <aside 
@@ -39,7 +65,7 @@ export const Sidebar = () => {
                 
                 {item.badge && (
                   <span className={`${styles.badge} ${styles[`badge${item.badge}`]}`}>
-                    {item.badge === 'new' ? 'NEW' : item.badge}
+                    {item.badge === 'new' ? t('common.new') : item.badge}
                   </span>
                 )}
               </NavLink>

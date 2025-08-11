@@ -1,11 +1,13 @@
-// CreateRoomModal.jsx - Модал создания комнаты
+// CreateRoomModal.jsx - Модал создания комнаты с переводами
 import { useState } from 'react'
 import { roomsAPI } from '@api/rooms'
 import { useUIStore } from '@store/uiStore'
+import { useI18n } from '@hooks/useI18n'
 import styles from './CreateRoomModal.module.css'
 
 export const CreateRoomModal = ({ onClose, onSuccess }) => {
   const { addNotification } = useUIStore()
+  const { t } = useI18n()
   
   const [formData, setFormData] = useState({
     name: '',
@@ -41,27 +43,27 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
     const newErrors = {}
     
     if (!formData.name.trim()) {
-      newErrors.name = 'Название комнаты обязательно'
+      newErrors.name = t('validation.required')
     } else if (formData.name.length < 3) {
-      newErrors.name = 'Название должно быть не менее 3 символов'
+      newErrors.name = t('validation.minLength', { count: 3 })
     } else if (formData.name.length > 50) {
-      newErrors.name = 'Название не должно превышать 50 символов'
+      newErrors.name = t('validation.maxLength', { count: 50 })
     }
     
     if (formData.description.length > 200) {
-      newErrors.description = 'Описание не должно превышать 200 символов'
+      newErrors.description = t('validation.maxLength', { count: 200 })
     }
     
     if (formData.max_players < 2) {
-      newErrors.max_players = 'Минимум 2 игрока'
+      newErrors.max_players = t('rooms.create.minPlayers')
     } else if (formData.max_players > 16) {
-      newErrors.max_players = 'Максимум 16 игроков'
+      newErrors.max_players = t('rooms.create.maxPlayers')
     }
     
     if (formData.is_private && !formData.password.trim()) {
-      newErrors.password = 'Пароль обязателен для приватной комнаты'
+      newErrors.password = t('rooms.create.passwordRequired')
     } else if (formData.password && formData.password.length < 4) {
-      newErrors.password = 'Пароль должен быть не менее 4 символов'
+      newErrors.password = t('validation.minLength', { count: 4 })
     }
     
     return newErrors
@@ -93,7 +95,7 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
       } else {
         addNotification({
           type: 'error',
-          title: 'Ошибка создания',
+          title: t('rooms.create.createError'),
           message: result.error
         })
         
@@ -109,8 +111,8 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
     } catch (err) {
       addNotification({
         type: 'error',
-        title: 'Ошибка',
-        message: 'Не удалось создать комнату'
+        title: t('common.error'),
+        message: t('rooms.create.createError')
       })
     } finally {
       setLoading(false)
@@ -136,11 +138,12 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
       <div className={styles.modal}>
         {/* Header */}
         <div className={styles.header}>
-          <h2>Создать комнату</h2>
+          <h2>{t('rooms.create.title')}</h2>
           <button 
             className={styles.closeButton}
             onClick={handleClose}
             disabled={loading}
+            title={t('common.close')}
           >
             <i className="fas fa-times" />
           </button>
@@ -151,7 +154,7 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
           {/* Room Name */}
           <div className={styles.field}>
             <label htmlFor="name">
-              Название комнаты *
+              {t('rooms.create.name')} *
             </label>
             <input
               type="text"
@@ -159,7 +162,7 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Введите название комнаты"
+              placeholder={t('rooms.create.namePlaceholder')}
               className={errors.name ? styles.error : ''}
               disabled={loading}
               maxLength={50}
@@ -172,14 +175,14 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
           {/* Description */}
           <div className={styles.field}>
             <label htmlFor="description">
-              Описание
+              {t('rooms.create.description')} ({t('common.optional')})
             </label>
             <textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Описание комнаты (необязательно)"
+              placeholder={t('rooms.create.descriptionPlaceholder')}
               className={errors.description ? styles.error : ''}
               disabled={loading}
               rows={3}
@@ -196,7 +199,7 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
           {/* Max Players */}
           <div className={styles.field}>
             <label htmlFor="max_players">
-              Максимум игроков
+              {t('rooms.create.maxPlayersLabel')}
             </label>
             <select
               id="max_players"
@@ -208,7 +211,7 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
             >
               {Array.from({ length: 15 }, (_, i) => i + 2).map(num => (
                 <option key={num} value={num}>
-                  {num} игроков
+                  {t('rooms.filters.players', { count: num })}
                 </option>
               ))}
             </select>
@@ -228,10 +231,10 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
                 disabled={loading}
               />
               <span className={styles.checkmark}></span>
-              Приватная комната
+              {t('rooms.create.isPrivate')}
             </label>
             <p className={styles.fieldHint}>
-              Приватные комнаты требуют пароль для входа
+              {t('rooms.create.privateHint')}
             </p>
           </div>
 
@@ -239,7 +242,7 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
           {formData.is_private && (
             <div className={styles.field}>
               <label htmlFor="password">
-                Пароль *
+                {t('rooms.create.password')} *
               </label>
               <input
                 type="password"
@@ -247,7 +250,7 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Введите пароль"
+                placeholder={t('rooms.create.passwordPlaceholder')}
                 className={errors.password ? styles.error : ''}
                 disabled={loading}
                 minLength={4}
@@ -266,7 +269,7 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
               onClick={handleClose}
               disabled={loading}
             >
-              Отмена
+              {t('common.cancel')}
             </button>
             
             <button
@@ -277,12 +280,12 @@ export const CreateRoomModal = ({ onClose, onSuccess }) => {
               {loading ? (
                 <>
                   <div className={styles.spinner} />
-                  Создание...
+                  {t('rooms.create.creating')}...
                 </>
               ) : (
                 <>
                   <i className="fas fa-plus" />
-                  Создать комнату
+                  {t('rooms.createRoom')}
                 </>
               )}
             </button>

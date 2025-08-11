@@ -1,7 +1,9 @@
-// Login Page
+// Login Page с поддержкой переводов
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@hooks/useAuth'
+import { useI18n } from '@hooks/useI18n'
+import { LanguageSwitcher } from '@components/common/LanguageSwitcher'
 import styles from './Login.module.css'
 
 export default function Login() {
@@ -11,6 +13,7 @@ export default function Login() {
   })
   
   const { login, isLoading, error } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
   
@@ -37,14 +40,19 @@ export default function Login() {
     <div className={styles.loginPage}>
       <div className={styles.loginContainer}>
         <div className={styles.loginCard}>
+          {/* Language Switcher */}
+          <div className={styles.languageSwitcher}>
+            <LanguageSwitcher variant="buttons" size="small" />
+          </div>
+
           <div className={styles.header}>
             <h1 className={styles.title}>ZZZ Tournament</h1>
-            <p className={styles.subtitle}>Вход в систему</p>
+            <p className={styles.subtitle}>{t('auth.loginTitle')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.field}>
-              <label htmlFor="username">Имя пользователя</label>
+              <label htmlFor="username">{t('auth.username')}</label>
               <input
                 type="text"
                 id="username"
@@ -52,13 +60,14 @@ export default function Login() {
                 value={formData.username}
                 onChange={handleChange}
                 required
-                placeholder="Введите имя пользователя"
+                placeholder={t('auth.username')}
                 className={styles.input}
+                disabled={isLoading}
               />
             </div>
 
             <div className={styles.field}>
-              <label htmlFor="password">Пароль</label>
+              <label htmlFor="password">{t('auth.password')}</label>
               <input
                 type="password"
                 id="password"
@@ -66,8 +75,9 @@ export default function Login() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                placeholder="Введите пароль"
+                placeholder={t('auth.password')}
                 className={styles.input}
+                disabled={isLoading}
               />
             </div>
 
@@ -82,17 +92,21 @@ export default function Login() {
               disabled={isLoading}
               className={styles.submitButton}
             >
-              {isLoading ? 'Вход...' : 'Войти'}
+              {isLoading ? t('auth.loggingIn') : t('auth.login')}
             </button>
           </form>
 
           <div className={styles.footer}>
             <p>
-              Нет аккаунта?{' '}
+              {t('auth.noAccount')}{' '}
               <Link to="/register" className={styles.link}>
-                Зарегистрироваться
+                {t('auth.register')}
               </Link>
             </p>
+            
+            <Link to="/forgot-password" className={styles.forgotLink}>
+              {t('auth.forgotPassword')}
+            </Link>
           </div>
         </div>
       </div>
