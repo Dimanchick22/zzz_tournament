@@ -1,7 +1,9 @@
-// Register Page
+// Register Page с поддержкой переводов
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@hooks/useAuth'
+import { useI18n } from '@hooks/useI18n'
+import { LanguageSwitcher } from '@components/common/LanguageSwitcher'
 import styles from './Register.module.css'
 
 export default function Register() {
@@ -14,6 +16,7 @@ export default function Register() {
   
   const [formErrors, setFormErrors] = useState({})
   const { register, isLoading, error } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -36,32 +39,32 @@ export default function Register() {
     
     // Валидация username
     if (!formData.username) {
-      errors.username = 'Имя пользователя обязательно'
+      errors.username = t('validation.required')
     } else if (formData.username.length < 3) {
-      errors.username = 'Имя пользователя должно быть не менее 3 символов'
+      errors.username = t('validation.minLength', { count: 3 })
     } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
-      errors.username = 'Имя пользователя может содержать только буквы, цифры, _ и -'
+      errors.username = t('validation.invalidUsername')
     }
     
     // Валидация email
     if (!formData.email) {
-      errors.email = 'Email обязателен'
+      errors.email = t('validation.required')
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Введите корректный email'
+      errors.email = t('validation.email')
     }
     
     // Валидация password
     if (!formData.password) {
-      errors.password = 'Пароль обязателен'
+      errors.password = t('validation.required')
     } else if (formData.password.length < 6) {
-      errors.password = 'Пароль должен быть не менее 6 символов'
+      errors.password = t('validation.minLength', { count: 6 })
     }
     
     // Валидация confirmPassword
     if (!formData.confirmPassword) {
-      errors.confirmPassword = 'Подтверждение пароля обязательно'
+      errors.confirmPassword = t('validation.required')
     } else if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = 'Пароли не совпадают'
+      errors.confirmPassword = t('validation.passwordMismatch')
     }
     
     return errors
@@ -94,14 +97,19 @@ export default function Register() {
     <div className={styles.registerPage}>
       <div className={styles.registerContainer}>
         <div className={styles.registerCard}>
+          {/* Language Switcher */}
+          <div className={styles.languageSwitcher}>
+            <LanguageSwitcher variant="buttons" size="small" />
+          </div>
+
           <div className={styles.header}>
             <h1 className={styles.title}>ZZZ Tournament</h1>
-            <p className={styles.subtitle}>Создание аккаунта</p>
+            <p className={styles.subtitle}>{t('auth.registerTitle')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.field}>
-              <label htmlFor="username">Имя пользователя</label>
+              <label htmlFor="username">{t('auth.username')}</label>
               <input
                 type="text"
                 id="username"
@@ -109,16 +117,18 @@ export default function Register() {
                 value={formData.username}
                 onChange={handleChange}
                 required
-                placeholder="Введите имя пользователя"
+                placeholder={t('auth.username')}
                 className={`${styles.input} ${formErrors.username ? styles.inputError : ''}`}
+                disabled={isLoading}
               />
+              <small className={styles.hint}>{t('auth.usernameHint')}</small>
               {formErrors.username && (
                 <span className={styles.fieldError}>{formErrors.username}</span>
               )}
             </div>
 
             <div className={styles.field}>
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">{t('auth.email')}</label>
               <input
                 type="email"
                 id="email"
@@ -126,8 +136,9 @@ export default function Register() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                placeholder="Введите email"
+                placeholder={t('auth.email')}
                 className={`${styles.input} ${formErrors.email ? styles.inputError : ''}`}
+                disabled={isLoading}
               />
               {formErrors.email && (
                 <span className={styles.fieldError}>{formErrors.email}</span>
@@ -135,7 +146,7 @@ export default function Register() {
             </div>
 
             <div className={styles.field}>
-              <label htmlFor="password">Пароль</label>
+              <label htmlFor="password">{t('auth.password')}</label>
               <input
                 type="password"
                 id="password"
@@ -143,16 +154,18 @@ export default function Register() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                placeholder="Введите пароль"
+                placeholder={t('auth.password')}
                 className={`${styles.input} ${formErrors.password ? styles.inputError : ''}`}
+                disabled={isLoading}
               />
+              <small className={styles.hint}>{t('auth.passwordHint')}</small>
               {formErrors.password && (
                 <span className={styles.fieldError}>{formErrors.password}</span>
               )}
             </div>
 
             <div className={styles.field}>
-              <label htmlFor="confirmPassword">Подтверждение пароля</label>
+              <label htmlFor="confirmPassword">{t('auth.confirmPassword')}</label>
               <input
                 type="password"
                 id="confirmPassword"
@@ -160,12 +173,28 @@ export default function Register() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                placeholder="Повторите пароль"
+                placeholder={t('auth.confirmPassword')}
                 className={`${styles.input} ${formErrors.confirmPassword ? styles.inputError : ''}`}
+                disabled={isLoading}
               />
               {formErrors.confirmPassword && (
                 <span className={styles.fieldError}>{formErrors.confirmPassword}</span>
               )}
+            </div>
+
+            {/* Terms acceptance */}
+            <div className={styles.termsField}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  required
+                  disabled={isLoading}
+                />
+                <span className={styles.checkmark}></span>
+                <span className={styles.termsText}>
+                  {t('auth.termsAccept')}
+                </span>
+              </label>
             </div>
 
             {error && (
@@ -179,15 +208,22 @@ export default function Register() {
               disabled={isLoading}
               className={styles.submitButton}
             >
-              {isLoading ? 'Создание аккаунта...' : 'Создать аккаунт'}
+              {isLoading ? (
+                <>
+                  <div className={styles.spinner} />
+                  {t('auth.registering')}
+                </>
+              ) : (
+                t('auth.createAccount')
+              )}
             </button>
           </form>
 
           <div className={styles.footer}>
             <p>
-              Уже есть аккаунт?{' '}
+              {t('auth.haveAccount')}{' '}
               <Link to="/login" className={styles.link}>
-                Войти
+                {t('auth.login')}
               </Link>
             </p>
           </div>

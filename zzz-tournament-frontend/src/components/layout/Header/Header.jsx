@@ -1,4 +1,4 @@
-// src/components/layout/Header/Header.jsx - обновленная версия с переводами
+// src/components/layout/Header/Header.jsx - обновленная версия с улучшенным переключателем языков
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@store/authStore'
@@ -52,8 +52,8 @@ export const Header = () => {
       </div>
 
       <div className={styles.right}>
-        {/* Language Switcher */}
-        <LanguageSwitcher variant="dropdown" size="small" />
+        {/* Language Switcher - используем minimal вариант для header */}
+        <LanguageSwitcher variant="minimal" size="base" />
 
         {/* Theme Toggle */}
         <button 

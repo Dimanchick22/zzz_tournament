@@ -1,5 +1,23 @@
-/* Dropdown variant */
-.dropdown {
+/* Language Switcher Styles */
+
+/* Common elements */
+.flag {
+    font-size: 1.2em;
+    line-height: 1;
+    display: inline-block;
+  }
+  
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* ===== DROPDOWN VARIANT ===== */
+  .dropdown {
     position: relative;
     display: inline-block;
   }
@@ -19,7 +37,7 @@
     min-width: 120px;
   }
   
-  .dropdownTrigger:hover {
+  .dropdownTrigger:hover:not(:disabled) {
     background: var(--color-surface-hover);
     border-color: var(--color-border-hover);
   }
@@ -32,11 +50,6 @@
   .dropdownTrigger.open {
     border-color: var(--color-primary-500);
     box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-  }
-  
-  .flag {
-    font-size: 1.2em;
-    line-height: 1;
   }
   
   .langName {
@@ -121,35 +134,37 @@
     font-size: var(--font-size-sm);
   }
   
-  /* Button group variant */
+  /* ===== BUTTON GROUP VARIANT ===== */
   .buttonGroup {
     display: flex;
     border-radius: var(--radius-lg);
     overflow: hidden;
     border: 1px solid var(--color-border);
+    background: var(--color-surface);
   }
   
   .langButton {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: var(--space-2);
     padding: var(--space-2) var(--space-3);
-    background: var(--color-surface);
+    background: transparent;
     border: none;
     border-right: 1px solid var(--color-border);
     cursor: pointer;
     transition: var(--transition-colors);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
-    text-transform: uppercase;
+    color: var(--color-text-secondary);
   }
   
   .langButton:last-child {
     border-right: none;
   }
   
-  .langButton:hover {
+  .langButton:hover:not(:disabled) {
     background: var(--color-surface-hover);
+    color: var(--color-text-primary);
   }
   
   .langButton.active {
@@ -165,42 +180,130 @@
   .code {
     font-family: var(--font-family-mono);
     font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   
-  /* Spinner */
-  .spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid transparent;
-    border-top: 2px solid currentColor;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+  /* ===== COMPACT VARIANT ===== */
+  .compactSwitcher {
+    display: flex;
+    gap: var(--space-1);
   }
   
-  /* Size variants */
+  .compactButton {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-all);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .compactButton:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .compactButton.active {
+    background: var(--color-primary-500);
+    border-color: var(--color-primary-500);
+    color: white;
+    box-shadow: var(--shadow-glow-primary);
+  }
+  
+  .compactButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  /* ===== MINIMAL VARIANT ===== */
+  .minimal {
+    display: inline-block;
+  }
+  
+  .minimalButton {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-all);
+    position: relative;
+  }
+  
+  .minimalButton:hover:not(:disabled) {
+    background: var(--color-surface-hover);
+    border-color: var(--color-primary-500);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .minimalButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  /* ===== SIZE VARIANTS ===== */
+  
+  /* Small size */
   .dropdown.small .dropdownTrigger {
     padding: var(--space-1) var(--space-2);
     font-size: var(--font-size-xs);
-    min-width: 100px;
-  }
-  
-  .dropdown.large .dropdownTrigger {
-    padding: var(--space-3) var(--space-4);
-    font-size: var(--font-size-base);
-    min-width: 140px;
+    min-width: 80px;
   }
   
   .buttonGroup.small .langButton {
     padding: var(--space-1) var(--space-2);
-    font-size: 10px;
+    font-size: var(--font-size-xs);
+  }
+  
+  .compactSwitcher.small .compactButton {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .minimal.small .minimalButton {
+    width: 28px;
+    height: 28px;
+  }
+  
+  /* Large size */
+  .dropdown.large .dropdownTrigger {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-base);
+    min-width: 160px;
   }
   
   .buttonGroup.large .langButton {
     padding: var(--space-3) var(--space-4);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
   }
   
-  /* Responsive */
+  .compactSwitcher.large .compactButton {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .minimal.large .minimalButton {
+    width: 44px;
+    height: 44px;
+  }
+  
+  /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {
     .dropdownMenu {
       left: auto;
@@ -216,9 +319,50 @@
       flex: 1;
       justify-content: center;
     }
+    
+    .compactSwitcher {
+      justify-content: center;
+    }
+    
+    /* Stack buttons vertically on very small screens */
+    .buttonGroup.small {
+      flex-direction: column;
+      width: auto;
+    }
+    
+    .buttonGroup.small .langButton {
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .buttonGroup.small .langButton:last-child {
+      border-bottom: none;
+    }
   }
   
-  /* Animations */
+  @media (max-width: 480px) {
+    .dropdown {
+      width: 100%;
+    }
+    
+    .dropdownTrigger {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .dropdownMenu {
+      left: 0;
+      right: 0;
+    }
+    
+    .compactSwitcher {
+      width: 100%;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+  }
+  
+  /* ===== ANIMATIONS ===== */
   @keyframes slideDown {
     from {
       opacity: 0;
@@ -233,4 +377,83 @@
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+  }
+  
+  /* ===== THEME SPECIFIC STYLES ===== */
+  
+  /* Enhanced styling for dark theme */
+  [data-theme="dark"] .compactButton.active {
+    box-shadow: 
+      0 0 12px rgba(255, 107, 53, 0.4),
+      0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  [data-theme="dark"] .minimalButton:hover:not(:disabled) {
+    box-shadow: 
+      0 0 8px rgba(255, 107, 53, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Light theme adjustments */
+  [data-theme="light"] .compactButton {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  [data-theme="light"] .compactButton:hover:not(:disabled) {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  [data-theme="light"] .compactButton.active {
+    box-shadow: 
+      0 0 8px rgba(255, 107, 53, 0.3),
+      0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ===== ACCESSIBILITY ===== */
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .langButton,
+    .compactButton,
+    .minimalButton,
+    .dropdownTrigger {
+      border-width: 2px;
+    }
+    
+    .langButton.active,
+    .compactButton.active {
+      border-color: currentColor;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .compactButton,
+    .minimalButton,
+    .chevron {
+      transition: none;
+    }
+    
+    .compactButton:hover,
+    .minimalButton:hover {
+      transform: none;
+    }
+    
+    .dropdownMenu {
+      animation: none;
+    }
+  }
+  
+  /* Focus styles for accessibility */
+  .langButton:focus-visible,
+  .compactButton:focus-visible,
+  .minimalButton:focus-visible,
+  .dropdownTrigger:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+  
+  .langOption:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: -2px;
   }

@@ -1,4 +1,4 @@
-// Login Page с поддержкой переводов
+// Login Page с улучшенным переключателем языков
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@hooks/useAuth'
@@ -92,7 +92,14 @@ export default function Login() {
               disabled={isLoading}
               className={styles.submitButton}
             >
-              {isLoading ? t('auth.loggingIn') : t('auth.login')}
+              {isLoading ? (
+                <>
+                  <div className={styles.spinner} />
+                  {t('auth.loggingIn')}
+                </>
+              ) : (
+                t('auth.login')
+              )}
             </button>
           </form>
 

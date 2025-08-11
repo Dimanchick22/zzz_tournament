@@ -3,7 +3,7 @@ import { useI18n } from '@hooks/useI18n'
 import { useUIStore } from '@store/uiStore'
 import styles from './LanguageSwitcher.module.css'
 
-export const LanguageSwitcher = ({ variant = 'dropdown', size = 'base' }) => {
+export const LanguageSwitcher = ({ variant = 'dropdown', size = 'base', compact = false }) => {
   const { currentLanguage, supportedLanguages, changeLanguage, getLanguageInfo } = useI18n()
   const { addNotification } = useUIStore()
   const [isOpen, setIsOpen] = useState(false)
@@ -45,6 +45,28 @@ export const LanguageSwitcher = ({ variant = 'dropdown', size = 'base' }) => {
     }
   }
 
+  // Компактный переключатель (только флаги)
+  if (variant === 'compact') {
+    return (
+      <div className={`${styles.compactSwitcher} ${styles[size]}`}>
+        {supportedLanguages.map(lang => (
+          <button
+            key={lang.code}
+            className={`${styles.compactButton} ${
+              currentLanguage === lang.code ? styles.active : ''
+            }`}
+            onClick={() => handleLanguageChange(lang.code)}
+            disabled={loading}
+            title={lang.nativeName}
+          >
+            <span className={styles.flag}>{lang.flag}</span>
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  // Кнопочный переключатель
   if (variant === 'buttons') {
     return (
       <div className={`${styles.buttonGroup} ${styles[size]}`}>
@@ -59,13 +81,37 @@ export const LanguageSwitcher = ({ variant = 'dropdown', size = 'base' }) => {
             title={lang.nativeName}
           >
             <span className={styles.flag}>{lang.flag}</span>
-            <span className={styles.code}>{lang.code.toUpperCase()}</span>
+            {!compact && <span className={styles.code}>{lang.code.toUpperCase()}</span>}
           </button>
         ))}
       </div>
     )
   }
 
+  // Минималистичный переключатель (один флаг)
+  if (variant === 'minimal') {
+    return (
+      <div className={`${styles.minimal} ${styles[size]}`}>
+        <button
+          className={styles.minimalButton}
+          onClick={() => {
+            const nextLang = supportedLanguages.find(lang => lang.code !== currentLanguage)
+            if (nextLang) handleLanguageChange(nextLang.code)
+          }}
+          disabled={loading}
+          title={`Switch to ${supportedLanguages.find(lang => lang.code !== currentLanguage)?.nativeName}`}
+        >
+          {loading ? (
+            <div className={styles.spinner} />
+          ) : (
+            <span className={styles.flag}>{currentLangInfo?.flag}</span>
+          )}
+        </button>
+      </div>
+    )
+  }
+
+  // Dropdown переключатель (по умолчанию)
   return (
     <div className={`${styles.dropdown} ${styles[size]}`}>
       <button
@@ -80,8 +126,12 @@ export const LanguageSwitcher = ({ variant = 'dropdown', size = 'base' }) => {
         ) : (
           <>
             <span className={styles.flag}>{currentLangInfo?.flag}</span>
-            <span className={styles.langName}>{currentLangInfo?.nativeName}</span>
-            <i className={`fas fa-chevron-down ${styles.chevron}`} />
+            {!compact && (
+              <>
+                <span className={styles.langName}>{currentLangInfo?.nativeName}</span>
+                <i className={`fas fa-chevron-down ${styles.chevron}`} />
+              </>
+            )}
           </>
         )}
       </button>
@@ -104,10 +154,12 @@ export const LanguageSwitcher = ({ variant = 'dropdown', size = 'base' }) => {
                 aria-selected={currentLanguage === lang.code}
               >
                 <span className={styles.flag}>{lang.flag}</span>
-                <div className={styles.langInfo}>
-                  <span className={styles.nativeName}>{lang.nativeName}</span>
-                  <span className={styles.englishName}>{lang.name}</span>
-                </div>
+                {!compact && (
+                  <div className={styles.langInfo}>
+                    <span className={styles.nativeName}>{lang.nativeName}</span>
+                    <span className={styles.englishName}>{lang.name}</span>
+                  </div>
+                )}
                 {currentLanguage === lang.code && (
                   <i className={`fas fa-check ${styles.checkIcon}`} />
                 )}
