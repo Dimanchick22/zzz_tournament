@@ -1,0 +1,268 @@
+{
+    "common": {
+      "loading": "Loading...",
+      "error": "Error",
+      "success": "Success",
+      "warning": "Warning",
+      "info": "Info",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "save": "Save",
+      "delete": "Delete",
+      "edit": "Edit",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "close": "Close",
+      "search": "Search",
+      "filter": "Filter",
+      "sort": "Sort",
+      "create": "Create",
+      "update": "Update",
+      "view": "View",
+      "join": "Join",
+      "leave": "Leave",
+      "toggleSidebar": "Toggle sidebar",
+      "toggleTheme": "Toggle theme",
+      "userMenu": "User menu",
+      "viewAll": "View all",
+      "findGame": "Find game",
+      "of": "of",
+      "total": "total"
+    },
+    
+    "auth": {
+      "login": "Login",
+      "logout": "Logout",
+      "register": "Register",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "forgotPassword": "Forgot Password?",
+      "rememberMe": "Remember Me",
+      "loginTitle": "Sign In",
+      "registerTitle": "Create Account",
+      "welcomeBack": "Welcome back!",
+      "welcomeMessage": "Welcome to ZZZ Tournament!",
+      "loginError": "Login Error",
+      "registerError": "Registration Error",
+      "loginSuccess": "Successfully logged in",
+      "registerSuccess": "Registration completed",
+      "logoutSuccess": "Successfully logged out",
+      "invalidCredentials": "Invalid credentials",
+      "userExists": "User already exists",
+      "weakPassword": "Password too weak",
+      "passwordMismatch": "Passwords don't match",
+      "sessionExpired": "Session expired",
+      "accessDenied": "Access denied"
+    },
+    
+    "navigation": {
+      "dashboard": "Dashboard",
+      "rooms": "Rooms",
+      "heroes": "Heroes",
+      "tournaments": "Tournaments",
+      "leaderboard": "Leaderboard",
+      "profile": "Profile",
+      "settings": "Settings",
+      "home": "Home",
+      "about": "About",
+      "help": "Help"
+    },
+    
+    "dashboard": {
+      "title": "Dashboard",
+      "welcome": "Welcome, {{username}}!",
+      "subtitle": "Here's what's happening in ZZZ Tournament today",
+      "stats": {
+        "rating": "Rating",
+        "wins": "Wins",
+        "losses": "Losses",
+        "winrate": "Win Rate",
+        "totalRooms": "Total Rooms",
+        "activeRooms": "Active Rooms",
+        "activeTournaments": "Active Tournaments",
+        "onlinePlayers": "Online Players"
+      },
+      "recentMatches": "Recent Matches",
+      "activeRooms": "Active Rooms",
+      "quickActions": "Quick Actions",
+      "serverStats": "Server Statistics",
+      "noRecentMatches": "No recent matches",
+      "noActiveRooms": "No active rooms"
+    },
+    
+    "rooms": {
+      "title": "Game Rooms",
+      "subtitle": "Join existing rooms or create your own",
+      "createRoom": "Create Room",
+      "joinRoom": "Join",
+      "leaveRoom": "Leave Room",
+      "roomDetails": "Room Details",
+      "participants": "Participants",
+      "maxPlayers": "Max Players",
+      "currentPlayers": "Current Players",
+      "roomStatus": {
+        "waiting": "Waiting for players",
+        "inProgress": "In Progress",
+        "finished": "Finished"
+      },
+      "filters": {
+        "all": "All Rooms",
+        "waiting": "Waiting for Players",
+        "inProgress": "In Progress",
+        "finished": "Finished",
+        "anySize": "Any Size"
+      },
+      "create": {
+        "title": "Create Room",
+        "name": "Room Name",
+        "description": "Description",
+        "maxPlayersLabel": "Maximum Players",
+        "isPrivate": "Private Room",
+        "password": "Password",
+        "passwordHint": "For private rooms",
+        "createSuccess": "Room created successfully",
+        "createError": "Error creating room"
+      },
+      "join": {
+        "enterPassword": "Enter Password",
+        "joinSuccess": "You joined the room",
+        "joinError": "Error joining room",
+        "roomFull": "Room is full",
+        "wrongPassword": "Wrong password"
+      },
+      "host": "Host",
+      "kick": "Kick",
+      "transferHost": "Transfer Host",
+      "startTournament": "Start Tournament",
+      "noRooms": "No rooms found",
+      "loadingRooms": "Loading rooms...",
+      "errorLoading": "Error loading rooms"
+    },
+    
+    "heroes": {
+      "title": "ZZZ Heroes",
+      "subtitle": "Explore all available heroes and their abilities",
+      "elements": {
+        "Physical": "Physical",
+        "Fire": "Fire",
+        "Ice": "Ice",
+        "Electric": "Electric",
+        "Ether": "Ether"
+      },
+      "rarities": {
+        "A": "A-Rank",
+        "S": "S-Rank"
+      },
+      "roles": {
+        "Attack": "Attack",
+        "Stun": "Stun",
+        "Anomaly": "Anomaly",
+        "Support": "Support",
+        "Defense": "Defense"
+      },
+      "filters": {
+        "allElements": "All Elements",
+        "allRarities": "All Rarities",
+        "allRoles": "All Roles"
+      },
+      "stats": "Stats",
+      "abilities": "Abilities",
+      "builds": "Builds",
+      "noHeroes": "No heroes found",
+      "loadingHeroes": "Loading heroes..."
+    },
+    
+    "tournaments": {
+      "title": "Tournaments",
+      "bracket": "Tournament Bracket",
+      "round": "Round {{number}}",
+      "finals": "Finals",
+      "semifinals": "Semifinals",
+      "quarterfinals": "Quarterfinals",
+      "winner": "Winner",
+      "champion": "Champion",
+      "status": {
+        "upcoming": "Upcoming",
+        "ongoing": "Ongoing",
+        "completed": "Completed"
+      },
+      "match": {
+        "vs": "vs",
+        "result": "Result",
+        "submitResult": "Submit Result"
+      },
+      "participants": "Participants",
+      "prize": "Prize",
+      "registrationDeadline": "Registration Deadline",
+      "startTournament": "Start Tournament",
+      "tournamentStarted": "Tournament started!",
+      "noTournaments": "No tournaments found"
+    },
+    
+    "leaderboard": {
+      "title": "Leaderboard",
+      "rank": "Rank",
+      "player": "Player",
+      "rating": "Rating",
+      "wins": "Wins",
+      "losses": "Losses",
+      "winrate": "Win Rate",
+      "lastActive": "Last Active",
+      "champion": "Champion",
+      "topPlayer": "Top Player",
+      "risingPlayer": "Rising Player"
+    },
+    
+    "profile": {
+      "title": "Profile",
+      "editProfile": "Edit Profile",
+      "avatar": "Avatar",
+      "uploadAvatar": "Upload Avatar",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "statistics": "Statistics",
+      "matchHistory": "Match History",
+      "achievements": "Achievements",
+      "settings": "Settings",
+      "language": "Language",
+      "theme": "Theme",
+      "notifications": "Notifications",
+      "privacy": "Privacy"
+    },
+    
+    "errors": {
+      "pageNotFound": "Page Not Found",
+      "accessDenied": "Access Denied",
+      "serverError": "Server Error",
+      "networkError": "Network Error",
+      "unknownError": "Unknown Error",
+      "tryAgain": "Try Again",
+      "goHome": "Go Home",
+      "contactSupport": "Contact Support"
+    },
+    
+    "validation": {
+      "required": "This field is required",
+      "email": "Please enter a valid email",
+      "minLength": "Minimum {{count}} characters",
+      "maxLength": "Maximum {{count}} characters",
+      "passwordMismatch": "Passwords don't match",
+      "invalidFormat": "Invalid format",
+      "tooShort": "Value too short",
+      "tooLong": "Value too long"
+    },
+    
+    "time": {
+      "now": "now",
+      "minutesAgo": "{{count}} min ago",
+      "hoursAgo": "{{count}} h ago",
+      "daysAgo": "{{count}} d ago",
+      "weeksAgo": "{{count}} w ago",
+      "monthsAgo": "{{count}} mo ago",
+      "yearsAgo": "{{count}} y ago"
+    }
+  }

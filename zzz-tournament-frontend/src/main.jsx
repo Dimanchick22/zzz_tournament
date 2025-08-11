@@ -1,13 +1,14 @@
+// src/main.jsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 
+// Инициализация i18n (должна быть до импорта App)
+import './config/i18n'
+
 import App from './App.jsx'
 import './index.css'
-
-// Настройка для React 18 StrictMode
-const root = ReactDOM.createRoot(document.getElementById('root'))
 
 // Глобальная обработка ошибок
 window.addEventListener('error', (event) => {
@@ -17,6 +18,8 @@ window.addEventListener('error', (event) => {
 window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason)
 })
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
 
 root.render(
   <React.StrictMode>

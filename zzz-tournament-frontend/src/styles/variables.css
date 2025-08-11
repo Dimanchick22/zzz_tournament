@@ -200,7 +200,7 @@
     /* Header/Navigation */
     --header-height: 4rem;          /* 64px */
     --sidebar-width: 16rem;         /* 256px */
-    --sidebar-width-collapsed: 4rem; /* 64px */
+    --sidebar-width-collapsed: 5rem; /* 80px */
     
     /* Content spacing */
     --page-padding-x: var(--space-6);

@@ -1,14 +1,17 @@
-// Header Component
+// src/components/layout/Header/Header.jsx
 import { useState } from 'react'
 import { useAuthStore } from '@store/authStore'
 import { useUIStore } from '@store/uiStore'
 import { useAuth } from '@hooks/useAuth'
+import { useI18n } from '@hooks/useI18n'
+import { LanguageSwitcher } from '@components/common/LanguageSwitcher'
 import styles from './Header.module.css'
 
 export const Header = () => {
   const { user } = useAuthStore()
   const { theme, toggleTheme, toggleSidebar, isMobile } = useUIStore()
   const { logout } = useAuth()
+  const { t } = useI18n()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   const handleLogout = () => {
@@ -23,7 +26,7 @@ export const Header = () => {
         <button 
           className={styles.sidebarToggle}
           onClick={toggleSidebar}
-          aria-label="Toggle sidebar"
+          aria-label={t('common.toggleSidebar')}
         >
           <i className="fas fa-bars" />
         </button>
@@ -35,11 +38,15 @@ export const Header = () => {
       </div>
 
       <div className={styles.right}>
+        {/* Language Switcher */}
+        <LanguageSwitcher variant="dropdown" size="small" />
+
         {/* Theme Toggle */}
         <button 
           className={styles.themeToggle}
           onClick={toggleTheme}
-          aria-label="Toggle theme"
+          aria-label={t('common.toggleTheme')}
+          title={t('profile.theme')}
         >
           <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`} />
         </button>
@@ -49,7 +56,7 @@ export const Header = () => {
           <button 
             className={styles.userButton}
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            aria-label="User menu"
+            aria-label={t('common.userMenu')}
           >
             <div className={styles.userAvatar}>
               {user?.avatar ? (
@@ -72,15 +79,15 @@ export const Header = () => {
             <div className={styles.userDropdown}>
               <div className={styles.userStats}>
                 <div className={styles.stat}>
-                  <span className={styles.statLabel}>Побед</span>
+                  <span className={styles.statLabel}>{t('dashboard.stats.wins')}</span>
                   <span className={styles.statValue}>{user?.wins || 0}</span>
                 </div>
                 <div className={styles.stat}>
-                  <span className={styles.statLabel}>Поражений</span>
+                  <span className={styles.statLabel}>{t('dashboard.stats.losses')}</span>
                   <span className={styles.statValue}>{user?.losses || 0}</span>
                 </div>
                 <div className={styles.stat}>
-                  <span className={styles.statLabel}>Винрейт</span>
+                  <span className={styles.statLabel}>{t('dashboard.stats.winrate')}</span>
                   <span className={styles.statValue}>
                     {user?.wins && user?.losses 
                       ? Math.round((user.wins / (user.wins + user.losses)) * 100) 
@@ -99,7 +106,7 @@ export const Header = () => {
                 }}
               >
                 <i className="fas fa-user" />
-                Профиль
+                {t('navigation.profile')}
               </button>
               
               <button 
@@ -110,7 +117,7 @@ export const Header = () => {
                 }}
               >
                 <i className="fas fa-cog" />
-                Настройки
+                {t('navigation.settings')}
               </button>
               
               <div className={styles.menuDivider} />
@@ -120,7 +127,7 @@ export const Header = () => {
                 onClick={handleLogout}
               >
                 <i className="fas fa-sign-out-alt" />
-                Выйти
+                {t('auth.logout')}
               </button>
             </div>
           )}

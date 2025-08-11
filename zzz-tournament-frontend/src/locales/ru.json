@@ -1,0 +1,268 @@
+{
+    "common": {
+      "loading": "Загрузка...",
+      "error": "Ошибка",
+      "success": "Успешно",
+      "warning": "Внимание",
+      "info": "Информация",
+      "cancel": "Отмена",
+      "confirm": "Подтвердить",
+      "save": "Сохранить",
+      "delete": "Удалить",
+      "edit": "Редактировать",
+      "back": "Назад",
+      "next": "Далее",
+      "previous": "Предыдущая",
+      "close": "Закрыть",
+      "search": "Поиск",
+      "filter": "Фильтр",
+      "sort": "Сортировка",
+      "create": "Создать",
+      "update": "Обновить",
+      "view": "Просмотр",
+      "join": "Присоединиться",
+      "leave": "Покинуть",
+      "toggleSidebar": "Переключить боковую панель",
+      "toggleTheme": "Переключить тему",
+      "userMenu": "Меню пользователя",
+      "viewAll": "Посмотреть все",
+      "findGame": "Найти игру",
+      "of": "из",
+      "total": "всего"
+    },
+    
+    "auth": {
+      "login": "Войти",
+      "logout": "Выйти",
+      "register": "Зарегистрироваться",
+      "username": "Имя пользователя",
+      "email": "Email",
+      "password": "Пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "forgotPassword": "Забыли пароль?",
+      "rememberMe": "Запомнить меня",
+      "loginTitle": "Вход в систему",
+      "registerTitle": "Создание аккаунта",
+      "welcomeBack": "С возвращением!",
+      "welcomeMessage": "Добро пожаловать в ZZZ Tournament!",
+      "loginError": "Ошибка входа",
+      "registerError": "Ошибка регистрации",
+      "loginSuccess": "Вход выполнен успешно",
+      "registerSuccess": "Регистрация завершена",
+      "logoutSuccess": "Выход выполнен",
+      "invalidCredentials": "Неверные учетные данные",
+      "userExists": "Пользователь уже существует",
+      "weakPassword": "Слишком слабый пароль",
+      "passwordMismatch": "Пароли не совпадают",
+      "sessionExpired": "Сессия истекла",
+      "accessDenied": "Доступ запрещен"
+    },
+    
+    "navigation": {
+      "dashboard": "Дашборд",
+      "rooms": "Комнаты",
+      "heroes": "Герои",
+      "tournaments": "Турниры",
+      "leaderboard": "Рейтинг",
+      "profile": "Профиль",
+      "settings": "Настройки",
+      "home": "Главная",
+      "about": "О проекте",
+      "help": "Помощь"
+    },
+    
+    "dashboard": {
+      "title": "Дашборд",
+      "welcome": "Добро пожаловать, {{username}}!",
+      "subtitle": "Вот что происходит в ZZZ Tournament сегодня",
+      "stats": {
+        "rating": "Рейтинг",
+        "wins": "Побед",
+        "losses": "Поражений",
+        "winrate": "Винрейт",
+        "totalRooms": "Всего комнат",
+        "activeRooms": "Активных комнат",
+        "activeTournaments": "Активных турниров",
+        "onlinePlayers": "Игроков онлайн"
+      },
+      "recentMatches": "Последние матчи",
+      "activeRooms": "Активные комнаты",
+      "quickActions": "Быстрые действия",
+      "serverStats": "Статистика сервера",
+      "noRecentMatches": "Нет недавних матчей",
+      "noActiveRooms": "Нет активных комнат"
+    },
+    
+    "rooms": {
+      "title": "Игровые комнаты",
+      "subtitle": "Присоединяйтесь к существующим комнатам или создайте свою",
+      "createRoom": "Создать комнату",
+      "joinRoom": "Присоединиться",
+      "leaveRoom": "Покинуть комнату",
+      "roomDetails": "Детали комнаты",
+      "participants": "Участники",
+      "maxPlayers": "Максимум игроков",
+      "currentPlayers": "Текущие игроки",
+      "roomStatus": {
+        "waiting": "Ожидание игроков",
+        "inProgress": "В процессе",
+        "finished": "Завершена"
+      },
+      "filters": {
+        "all": "Все комнаты",
+        "waiting": "Ожидают игроков", 
+        "inProgress": "В процессе",
+        "finished": "Завершенные",
+        "anySize": "Любой размер"
+      },
+      "create": {
+        "title": "Создать комнату",
+        "name": "Название комнаты",
+        "description": "Описание",
+        "maxPlayersLabel": "Максимальное количество игроков",
+        "isPrivate": "Приватная комната",
+        "password": "Пароль",
+        "passwordHint": "Для приватных комнат",
+        "createSuccess": "Комната создана успешно",
+        "createError": "Ошибка создания комнаты"
+      },
+      "join": {
+        "enterPassword": "Введите пароль",
+        "joinSuccess": "Вы присоединились к комнате",
+        "joinError": "Ошибка присоединения",
+        "roomFull": "Комната заполнена",
+        "wrongPassword": "Неверный пароль"
+      },
+      "host": "Хост",
+      "kick": "Исключить",
+      "transferHost": "Передать права хоста",
+      "startTournament": "Запустить турнир",
+      "noRooms": "Комнаты не найдены",
+      "loadingRooms": "Загружаем комнаты...",
+      "errorLoading": "Ошибка загрузки комнат"
+    },
+    
+    "heroes": {
+      "title": "Герои ZZZ",
+      "subtitle": "Изучите всех доступных героев и их способности",
+      "elements": {
+        "Physical": "Физический",
+        "Fire": "Огонь", 
+        "Ice": "Лед",
+        "Electric": "Электро",
+        "Ether": "Эфир"
+      },
+      "rarities": {
+        "A": "A-Ранг",
+        "S": "S-Ранг"
+      },
+      "roles": {
+        "Attack": "Атака",
+        "Stun": "Оглушение",
+        "Anomaly": "Аномалия",
+        "Support": "Поддержка",
+        "Defense": "Защита"
+      },
+      "filters": {
+        "allElements": "Все элементы",
+        "allRarities": "Все редкости", 
+        "allRoles": "Все роли"
+      },
+      "stats": "Характеристики",
+      "abilities": "Способности",
+      "builds": "Сборки",
+      "noHeroes": "Герои не найдены",
+      "loadingHeroes": "Загружаем героев..."
+    },
+    
+    "tournaments": {
+      "title": "Турниры",
+      "bracket": "Турнирная сетка",
+      "round": "Раунд {{number}}",
+      "finals": "Финал",
+      "semifinals": "Полуфинал", 
+      "quarterfinals": "Четвертьфинал",
+      "winner": "Победитель",
+      "champion": "Чемпион",
+      "status": {
+        "upcoming": "Предстоящий",
+        "ongoing": "Идет",
+        "completed": "Завершен"
+      },
+      "match": {
+        "vs": "против",
+        "result": "Результат",
+        "submitResult": "Отправить результат"
+      },
+      "participants": "Участники",
+      "prize": "Приз",
+      "registrationDeadline": "Дедлайн регистрации",
+      "startTournament": "Запустить турнир",
+      "tournamentStarted": "Турнир начался!",
+      "noTournaments": "Турниры не найдены"
+    },
+    
+    "leaderboard": {
+      "title": "Таблица лидеров",
+      "rank": "Место",
+      "player": "Игрок",
+      "rating": "Рейтинг",
+      "wins": "Побед",
+      "losses": "Поражений",
+      "winrate": "Винрейт",
+      "lastActive": "Последняя активность",
+      "champion": "Чемпион",
+      "topPlayer": "Топ игрок",
+      "risingPlayer": "Восходящий игрок"
+    },
+    
+    "profile": {
+      "title": "Профиль",
+      "editProfile": "Редактировать профиль",
+      "avatar": "Аватар",
+      "uploadAvatar": "Загрузить аватар",
+      "changePassword": "Сменить пароль",
+      "currentPassword": "Текущий пароль",
+      "newPassword": "Новый пароль",
+      "statistics": "Статистика",
+      "matchHistory": "История матчей",
+      "achievements": "Достижения",
+      "settings": "Настройки",
+      "language": "Язык",
+      "theme": "Тема",
+      "notifications": "Уведомления",
+      "privacy": "Конфиденциальность"
+    },
+    
+    "errors": {
+      "pageNotFound": "Страница не найдена",
+      "accessDenied": "Доступ запрещен",
+      "serverError": "Ошибка сервера",
+      "networkError": "Ошибка сети",
+      "unknownError": "Неизвестная ошибка",
+      "tryAgain": "Попробовать снова",
+      "goHome": "На главную",
+      "contactSupport": "Обратиться в поддержку"
+    },
+    
+    "validation": {
+      "required": "Это поле обязательно",
+      "email": "Введите корректный email",
+      "minLength": "Минимум {{count}} символов",
+      "maxLength": "Максимум {{count}} символов",
+      "passwordMismatch": "Пароли не совпадают",
+      "invalidFormat": "Неверный формат",
+      "tooShort": "Слишком короткое значение",
+      "tooLong": "Слишком длинное значение"
+    },
+    
+    "time": {
+      "now": "сейчас",
+      "minutesAgo": "{{count}} мин. назад",
+      "hoursAgo": "{{count}} ч. назад", 
+      "daysAgo": "{{count}} дн. назад",
+      "weeksAgo": "{{count}} нед. назад",
+      "monthsAgo": "{{count}} мес. назад",
+      "yearsAgo": "{{count}} лет назад"
+    }
+  }
