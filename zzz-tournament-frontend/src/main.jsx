@@ -10,6 +10,16 @@ import './config/i18n'
 import App from './App.jsx'
 import './index.css'
 
+// Проверяем и устанавливаем язык при загрузке
+const initializeLanguage = () => {
+  const storedLang = localStorage.getItem('i18nextLng')
+  if (storedLang && ['ru', 'en'].includes(storedLang)) {
+    document.documentElement.lang = storedLang
+  }
+}
+
+initializeLanguage()
+
 // Глобальная обработка ошибок
 window.addEventListener('error', (event) => {
   console.error('Global error:', event.error)

@@ -17,6 +17,39 @@ const resources = {
   }
 }
 
+// Функция для получения языка из localStorage
+const getStoredLanguage = () => {
+  try {
+    const stored = localStorage.getItem('i18nextLng')
+    if (stored && ['ru', 'en'].includes(stored)) {
+      return stored
+    }
+  } catch (error) {
+    console.warn('Error reading language from localStorage:', error)
+  }
+  return null
+}
+
+// Определяем язык по умолчанию
+const getDefaultLanguage = () => {
+  // Сначала проверяем localStorage
+  const storedLang = getStoredLanguage()
+  if (storedLang) {
+    return storedLang
+  }
+  
+  // Затем проверяем язык браузера
+  const browserLang = navigator.language || navigator.languages?.[0]
+  if (browserLang?.startsWith('ru')) {
+    return 'ru'
+  }
+  
+  // По умолчанию английский
+  return 'en'
+}
+
+const defaultLanguage = getDefaultLanguage()
+
 i18n
   // Подключаем плагины
   .use(Backend) // Для загрузки переводов с сервера (опционально)
@@ -30,11 +63,11 @@ i18n
     // Язык по умолчанию
     fallbackLng: 'en',
     
-    // Язык по умолчанию для русскоязычных пользователей
-    lng: 'ru',
+    // Устанавливаем определенный язык
+    lng: defaultLanguage,
     
     // Отладка (включить в development)
-    debug: process.env.NODE_ENV === 'development',
+    debug: import.meta.env.DEV,
     
     // Настройки интерполяции
     interpolation: {
@@ -43,7 +76,7 @@ i18n
     
     // Настройки определения языка
     detection: {
-      // Порядок определения языка
+      // Порядок определения языка - localStorage в приоритете
       order: ['localStorage', 'navigator', 'htmlTag'],
       
       // Ключ для сохранения в localStorage
@@ -54,6 +87,9 @@ i18n
       
       // Исключения
       excludeCacheFor: ['cimode'],
+      
+      // Проверяем только поддерживаемые языки
+      checkWhitelist: true,
     },
     
     // Настройки backend (если используете)
@@ -63,6 +99,7 @@ i18n
     
     // Поддерживаемые языки
     supportedLngs: ['en', 'ru'],
+    nonExplicitSupportedLngs: true,
     
     // Не загружать язык по умолчанию дважды
     load: 'languageOnly',
@@ -78,6 +115,20 @@ i18n
       bindI18nStore: 'added removed',
     },
   })
+
+// Устанавливаем атрибут языка в HTML при инициализации
+document.documentElement.lang = defaultLanguage
+
+// Слушаем изменения языка для обновления HTML атрибута
+i18n.on('languageChanged', (lng) => {
+  document.documentElement.lang = lng
+  // Также сохраняем в localStorage для надежности
+  try {
+    localStorage.setItem('i18nextLng', lng)
+  } catch (error) {
+    console.warn('Error saving language to localStorage:', error)
+  }
+})
 
 export default i18n
 

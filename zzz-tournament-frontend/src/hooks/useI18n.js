@@ -15,7 +15,7 @@ export const useI18n = () => {
     try {
       await i18nChangeLanguage(languageCode)
       
-      // Сохраняем в localStorage для персистентности
+      // i18next автоматически сохраняет в localStorage, но добавим явное сохранение для надежности
       localStorage.setItem('i18nextLng', languageCode)
       
       // Обновляем атрибут lang в HTML
