@@ -36,11 +36,14 @@ function App() {
   // Инициализация приложения
   useEffect(() => {
     const initApp = async () => {
+      console.log('🚀 Initializing app...')
       // Инициализируем тему
       initializeTheme()
       
       // Проверяем аутентификацию при загрузке
-      await checkAuth()
+      console.log('🔍 Checking authentication...')
+      await checkAuth() 
+      console.log('✅ App initialization complete')
     }
 
     initApp()

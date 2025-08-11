@@ -152,12 +152,23 @@ export const validateToken = async () => {
     // Проверяем токен через запрос профиля
     const response = await apiRequest.get(API_ENDPOINTS.USERS.PROFILE)
 
+    // Обрабатываем различные структуры ответа
+    let user = null
+    if (response.data?.data) {
+      user = response.data.data
+    } else if (response.data?.user) {
+      user = response.data.user
+    } else if (response.data?.username) {
+      user = response.data
+    }
+
     return {
       success: true,
       valid: true,
-      user: response.data.user || response.data
+      user: user
     }
   } catch (error) {
+    console.error('Token validation failed:', error)
     return {
       success: false,
       valid: false,

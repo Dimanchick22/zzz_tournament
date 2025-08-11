@@ -1,4 +1,4 @@
-// useAuth Hook - логика аутентификации с реальным API
+// useAuth Hook - логика аутентификации с реальным API (исправлено)
 import { useCallback } from 'react'
 import { useAuthStore } from '@store/authStore'
 import { useUIStore } from '@store/uiStore'
@@ -38,6 +38,7 @@ export const useAuth = () => {
 
       const parsedAuth = JSON.parse(authData)
       const storedToken = parsedAuth.state?.token
+      const storedUser = parsedAuth.state?.user
 
       if (!storedToken) {
         setLoading(false)
@@ -47,22 +48,37 @@ export const useAuth = () => {
       // Устанавливаем токен в API клиент
       setAuthToken(storedToken)
 
-      // Проверяем валидность токена через запрос профиля
-      const result = await authAPI.validate()
-
-      if (result.success && result.valid) {
-        // Токен валидный, инициализируем auth state
-        loginAction(result.user, storedToken)
-        
-        addNotification({
-          type: 'success',
-          title: 'С возвращением!',
-          message: `Привет, ${result.user.username}!`
-        })
+      // Если у нас есть сохраненные данные пользователя, используем их
+      if (storedUser) {
+        // Пытаемся получить актуальную информацию о пользователе
+        try {
+          const profileResult = await usersAPI.getProfile()
+          
+          if (profileResult.success) {
+            // Обновляем данные пользователя актуальными с сервера
+            loginAction(profileResult.user, storedToken)
+          } else {
+            // Если не удалось получить профиль, используем сохраненные данные
+            loginAction(storedUser, storedToken)
+          }
+          
+          console.log('✅ Auth restored from localStorage')
+        } catch (profileError) {
+          // Если ошибка получения профиля, но токен валидный, используем сохраненные данные
+          console.warn('Could not fetch fresh profile, using cached user data:', profileError)
+          loginAction(storedUser, storedToken)
+        }
       } else {
-        // Токен невалидный, очищаем все
-        clearAuthToken()
-        logoutAction()
+        // Если нет сохраненных данных пользователя, получаем с сервера
+        const result = await authAPI.validate()
+
+        if (result.success && result.valid && result.user) {
+          loginAction(result.user, storedToken)
+        } else {
+          // Токен невалидный, очищаем все
+          clearAuthToken()
+          logoutAction()
+        }
       }
     } catch (error) {
       console.error('Auth check failed:', error)
