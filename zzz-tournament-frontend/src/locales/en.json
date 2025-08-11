@@ -34,7 +34,8 @@
       "retry": "Retry",
       "settings": "Settings",
       "clear": "Clear",
-      "optional": "optional"
+      "optional": "optional",
+      "unknown": "Unknown"
     },
     
     "auth": {
@@ -92,7 +93,11 @@
       "title": "Dashboard",
       "welcome": "Welcome, {{username}}!",
       "subtitle": "Here's what's happening in ZZZ Tournament today",
+      "loadingDashboard": "Loading dashboard data...",
+      "errorLoading": "Failed to load dashboard data",
       "stats": {
+        "yourRating": "Your Rating",
+        "ratingChange": "All time",
         "rating": "Rating",
         "wins": "Wins",
         "losses": "Losses",
@@ -101,6 +106,13 @@
         "activeRooms": "Active Rooms",
         "activeTournaments": "Active Tournaments",
         "onlinePlayers": "Online Players"
+      },
+      "recentActivity": "Recent Activity",
+      "activity":{
+        "accountCreated": "Account created",
+        "recently": "recently",
+        "currentRating": "Current rating",
+        "victories": "Victories"
       },
       "recentMatches": "Recent Matches",
       "activeRooms": "Active Rooms",
@@ -111,6 +123,7 @@
     },
     
     "rooms": {
+      "unknownRoom": "Unknown room",
       "title": "Game Rooms",
       "subtitle": "Join existing rooms or create your own",
       "createRoom": "Create Room",

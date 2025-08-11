@@ -34,7 +34,8 @@
       "retry": "Повторить",
       "settings": "Настройки",
       "clear": "Очистить",
-      "optional": "необязательно"
+      "optional": "необязательно",
+      "unknown": "Неизвестно"
     },
     
     "auth": {
@@ -89,10 +90,13 @@
     },
     
     "dashboard": {
-      "title": "Дашборд",
+      "title": "Dashboard",
       "welcome": "Добро пожаловать, {{username}}!",
       "subtitle": "Вот что происходит в ZZZ Tournament сегодня",
+      "loadingDashboard": "Загружаем данные дашборда...",
+      "errorLoading": "Не удалось загрузить данные дашборда",
       "stats": {
+        "ratingChange": "За всё время",
         "rating": "Рейтинг",
         "wins": "Побед",
         "losses": "Поражений",
@@ -100,7 +104,15 @@
         "totalRooms": "Всего комнат",
         "activeRooms": "Активных комнат",
         "activeTournaments": "Активных турниров",
-        "onlinePlayers": "Игроков онлайн"
+        "onlinePlayers": "Игроков онлайн",
+        "yourRating": "Ваш рейтинг"
+      },
+      "recentActivity": "Недавняя активность",
+      "activity": {
+        "accountCreated": "Аккаунт создан",
+        "recently": "недавно",
+        "currentRating": "Текущий рейтинг",
+        "victories": "Победы"
       },
       "recentMatches": "Последние матчи",
       "activeRooms": "Активные комнаты",
@@ -111,6 +123,7 @@
     },
     
     "rooms": {
+      "unknownRoom": "Неизвестная комната",
       "title": "Игровые комнаты",
       "subtitle": "Присоединяйтесь к существующим комнатам или создайте свою",
       "createRoom": "Создать комнату",

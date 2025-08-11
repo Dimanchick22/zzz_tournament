@@ -1,5 +1,3 @@
-// API Configuration
-
 import { env } from './env.js'
 
 // API Endpoints
@@ -48,8 +46,8 @@ export const API_ENDPOINTS = {
   
   // Chat endpoints
   CHAT: {
-    MESSAGES: (roomId) => `/api/v1/chat/rooms/${roomId}/messages`,
-    SEND: (roomId) => `/api/v1/chat/rooms/${roomId}/send`
+    MESSAGES: (roomId) => `/api/v1/rooms/${roomId}/messages`,
+    // Отправка сообщений через WebSocket
   },
   
   // WebSocket endpoint
