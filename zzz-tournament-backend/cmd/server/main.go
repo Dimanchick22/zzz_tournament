@@ -116,9 +116,13 @@ func main() {
 		// Аудит логирование для критичных действий
 		authGroup.Use(middleware.AuditLoggingMiddleware())
 
-		authGroup.POST("/register", h.Register)
-		authGroup.POST("/login", h.Login)
-		authGroup.POST("/refresh", h.RefreshToken)
+		authGroup.POST("/register", h.Auth.Register)
+		authGroup.POST("/login", h.Auth.Login)
+		authGroup.POST("/refresh", h.Auth.RefreshToken)
+		authGroup.POST("/logout", middleware.AuthMiddleware(), h.Auth.Logout)
+		authGroup.POST("/change-password", middleware.AuthMiddleware(), h.Auth.ChangePassword)
+		authGroup.POST("/forgot-password", h.Auth.ForgotPassword)
+		authGroup.POST("/reset-password", h.Auth.ResetPassword)
 	}
 
 	// === PROTECTED ROUTES ===
@@ -133,54 +137,73 @@ func main() {
 		// === USER ROUTES ===
 		users := protected.Group("/users")
 		{
-			users.GET("/profile", h.GetProfile)
-			users.PUT("/profile", h.UpdateProfile)
-			users.GET("/leaderboard", h.GetLeaderboard)
+			users.GET("/profile", h.Users.GetProfile)
+			users.PUT("/profile", h.Users.UpdateProfile)
+			users.GET("/leaderboard", h.Users.GetLeaderboard)
+			users.GET("/search", h.Users.SearchUsers)
+			users.GET("/:id", h.Users.GetUserByID)
+			users.GET("/:id/stats", h.Users.GetUserStats)
 		}
 
 		// === HERO ROUTES ===
 		heroes := protected.Group("/heroes")
 		{
-			heroes.GET("", h.GetHeroes)
+			heroes.GET("", h.Heroes.GetHeroes)
+			heroes.GET("/:id", h.Heroes.GetHero)
+			heroes.GET("/:id/stats", h.Heroes.GetHeroStats)
 
 			// Только администраторы могут управлять героями
 			admin := heroes.Group("")
 			admin.Use(middleware.AdminOnlyMiddleware())
 			{
-				admin.POST("", h.CreateHero)
-				admin.PUT("/:id", h.UpdateHero)
-				admin.DELETE("/:id", h.DeleteHero)
+				admin.POST("", h.Heroes.CreateHero)
+				admin.PUT("/:id", h.Heroes.UpdateHero)
+				admin.DELETE("/:id", h.Heroes.DeleteHero)
+				admin.POST("/:id/restore", h.Heroes.RestoreHero)
 			}
 		}
 
 		// === ROOM ROUTES ===
 		rooms := protected.Group("/rooms")
 		{
-			rooms.GET("", h.GetRooms)
-			rooms.POST("", h.CreateRoom)
-			rooms.GET("/:id", h.GetRoom)
-			rooms.PUT("/:id", h.UpdateRoom)
-			rooms.DELETE("/:id", h.DeleteRoom)
+			rooms.GET("", h.Rooms.GetRooms)
+			rooms.POST("", h.Rooms.CreateRoom)
+			rooms.GET("/:id", h.Rooms.GetRoom)
+			rooms.PUT("/:id", h.Rooms.UpdateRoom)
+			rooms.DELETE("/:id", h.Rooms.DeleteRoom)
 
 			// Действия для участников
-			rooms.POST("/:id/join", h.JoinRoom)
-			rooms.POST("/:id/leave", h.LeaveRoom)
+			rooms.POST("/:id/join", h.Rooms.JoinRoom)
+			rooms.POST("/:id/leave", h.Rooms.LeaveRoom)
+			rooms.GET("/:id/participants", h.Rooms.GetRoomParticipants)
+
+			// Действия для хоста
+			rooms.POST("/:id/kick", h.Rooms.KickPlayer)
+			rooms.PUT("/:id/password", h.Rooms.SetRoomPassword)
+
+			// Чат
+			rooms.GET("/:id/messages", h.Chat.GetRoomMessages)
+			rooms.POST("/:id/messages", h.Chat.SendMessage)
+			rooms.PUT("/:id/messages/:message_id", h.Chat.EditMessage)
+			rooms.DELETE("/:id/messages/:message_id", h.Chat.DeleteMessage)
+			rooms.GET("/:id/chat/stats", h.Chat.GetChatStats)
+			rooms.DELETE("/:id/chat/clear", h.Chat.ClearChatHistory)
+			rooms.POST("/:id/chat/mute/:user_id", h.Chat.MuteUser)
+			rooms.DELETE("/:id/chat/mute/:user_id", h.Chat.UnmuteUser)
 		}
 
 		// === TOURNAMENT ROUTES ===
 		tournaments := protected.Group("/tournaments")
 		{
+			tournaments.GET("", h.Tournaments.GetTournaments)
+			tournaments.GET("/:id", h.Tournaments.GetTournament)
+			tournaments.GET("/:id/stats", h.Tournaments.GetTournamentStats)
+			tournaments.POST("/:id/cancel", h.Tournaments.CancelTournament)
+			tournaments.GET("/:id/matches/:match_id", h.Tournaments.GetMatch)
+			tournaments.POST("/:id/matches/:match_id/result", h.Tournaments.SubmitMatchResult)
+
 			// Запуск турнира
-			protected.POST("/rooms/:id/tournament/start", h.StartTournament)
-
-			tournaments.GET("/:id", h.GetTournament)
-			tournaments.POST("/:id/matches/:match_id/result", h.SubmitMatchResult)
-		}
-
-		// === CHAT ROUTES ===
-		chat := protected.Group("/chat")
-		{
-			chat.GET("/rooms/:id/messages", h.GetRoomMessages)
+			protected.POST("/rooms/:id/tournament/start", h.Tournaments.StartTournament)
 		}
 	}
 
@@ -200,15 +223,66 @@ func main() {
 	if gin.Mode() != gin.ReleaseMode {
 		r.GET("/docs", func(c *gin.Context) {
 			c.JSON(200, gin.H{
-				"message": "API Documentation",
+				"message": "ZZZ Tournament API Documentation",
 				"version": "1.0.0",
 				"endpoints": map[string]interface{}{
-					"auth":        "/api/v1/auth/*",
-					"users":       "/api/v1/users/*",
-					"heroes":      "/api/v1/heroes",
-					"rooms":       "/api/v1/rooms",
-					"tournaments": "/api/v1/tournaments",
-					"websocket":   "/ws",
+					"auth": map[string]string{
+						"POST /api/v1/auth/register":        "Регистрация пользователя",
+						"POST /api/v1/auth/login":           "Авторизация",
+						"POST /api/v1/auth/refresh":         "Обновление токена",
+						"POST /api/v1/auth/logout":          "Выход из системы",
+						"POST /api/v1/auth/change-password": "Смена пароля",
+						"POST /api/v1/auth/forgot-password": "Восстановление пароля",
+						"POST /api/v1/auth/reset-password":  "Сброс пароля",
+					},
+					"users": map[string]string{
+						"GET /api/v1/users/profile":     "Получить профиль",
+						"PUT /api/v1/users/profile":     "Обновить профиль",
+						"GET /api/v1/users/leaderboard": "Рейтинговая таблица",
+						"GET /api/v1/users/search":      "Поиск пользователей",
+						"GET /api/v1/users/:id":         "Информация о пользователе",
+						"GET /api/v1/users/:id/stats":   "Статистика пользователя",
+					},
+					"heroes": map[string]string{
+						"GET /api/v1/heroes":           "Список героев",
+						"GET /api/v1/heroes/:id":       "Информация о герое",
+						"GET /api/v1/heroes/:id/stats": "Статистика героя",
+						"POST /api/v1/heroes":          "Создать героя (админ)",
+						"PUT /api/v1/heroes/:id":       "Обновить героя (админ)",
+						"DELETE /api/v1/heroes/:id":    "Удалить героя (админ)",
+					},
+					"rooms": map[string]string{
+						"GET /api/v1/rooms":               "Список комнат",
+						"POST /api/v1/rooms":              "Создать комнату",
+						"GET /api/v1/rooms/:id":           "Информация о комнате",
+						"PUT /api/v1/rooms/:id":           "Обновить комнату",
+						"DELETE /api/v1/rooms/:id":        "Удалить комнату",
+						"POST /api/v1/rooms/:id/join":     "Присоединиться к комнате",
+						"POST /api/v1/rooms/:id/leave":    "Покинуть комнату",
+						"POST /api/v1/rooms/:id/kick":     "Исключить игрока",
+						"GET /api/v1/rooms/:id/messages":  "Сообщения чата",
+						"POST /api/v1/rooms/:id/messages": "Отправить сообщение",
+					},
+					"tournaments": map[string]string{
+						"GET /api/v1/tournaments":                               "Список турниров",
+						"POST /api/v1/rooms/:id/tournament/start":               "Запустить турнир",
+						"GET /api/v1/tournaments/:id":                           "Информация о турнире",
+						"POST /api/v1/tournaments/:id/matches/:match_id/result": "Результат матча",
+						"POST /api/v1/tournaments/:id/cancel":                   "Отменить турнир",
+					},
+					"websocket": "/ws - WebSocket соединение",
+				},
+				"features": []string{
+					"JWT Authentication",
+					"Real-time WebSocket chat",
+					"Tournament bracket generation",
+					"ELO rating system",
+					"Room management",
+					"Hero database",
+					"User statistics",
+					"Rate limiting",
+					"CORS protection",
+					"Structured logging",
 				},
 			})
 		})
@@ -232,6 +306,7 @@ func main() {
 		if gin.Mode() != gin.ReleaseMode {
 			log.Printf("📚 API Documentation: http://localhost:%s/docs", cfg.Port)
 			log.Printf("💊 Health Check: http://localhost:%s/health", cfg.Port)
+			log.Printf("🔌 WebSocket: ws://localhost:%s/ws", cfg.Port)
 		}
 
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
