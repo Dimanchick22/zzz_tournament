@@ -1,4 +1,4 @@
-// internal/handlers/users.go
+// internal/handlers/users.go - исправленная версия
 package handlers
 
 import (
@@ -416,21 +416,6 @@ func getPerPageFromQuery(c *gin.Context, defaultPerPage int) int {
 		return defaultPerPage
 	}
 	return perPage
-}
-
-func joinStrings(strings []string, separator string) string {
-	if len(strings) == 0 {
-		return ""
-	}
-	if len(strings) == 1 {
-		return strings[0]
-	}
-
-	result := strings[0]
-	for i := 1; i < len(strings); i++ {
-		result += separator + strings[i]
-	}
-	return result
 }
 
 func getRatingTier(rating int) string {

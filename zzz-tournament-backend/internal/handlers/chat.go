@@ -1,4 +1,4 @@
-// internal/handlers/chat.go
+// internal/handlers/chat.go - исправленная версия
 package handlers
 
 import (
@@ -56,6 +56,20 @@ type MessageWithUser struct {
 	EditedAt   *time.Time `json:"edited_at,omitempty"`
 	CanEdit    bool       `json:"can_edit"`
 	CanDelete  bool       `json:"can_delete"`
+}
+
+// UserMessageStats статистика сообщений пользователя
+type UserMessageStats struct {
+	UserID       int        `db:"user_id" json:"user_id"`
+	Username     string     `db:"username" json:"username"`
+	MessageCount int        `db:"message_count" json:"message_count"`
+	LastMessage  *time.Time `db:"last_message" json:"last_message,omitempty"`
+}
+
+// MessageActivityStats статистика активности сообщений
+type MessageActivityStats struct {
+	Hour         int `db:"hour" json:"hour"`
+	MessageCount int `db:"message_count" json:"message_count"`
 }
 
 // GetRoomMessages получение сообщений комнаты
@@ -564,18 +578,6 @@ func (h *ChatHandlers) GetChatStats(c *gin.Context) {
 		MostActiveHour   int                    `json:"most_active_hour"`
 		FirstMessageTime *time.Time             `json:"first_message_time,omitempty"`
 		LastMessageTime  *time.Time             `json:"last_message_time,omitempty"`
-	}
-
-	type UserMessageStats struct {
-		UserID       int        `db:"user_id" json:"user_id"`
-		Username     string     `db:"username" json:"username"`
-		MessageCount int        `db:"message_count" json:"message_count"`
-		LastMessage  *time.Time `db:"last_message" json:"last_message,omitempty"`
-	}
-
-	type MessageActivityStats struct {
-		Hour         int `db:"hour" json:"hour"`
-		MessageCount int `db:"message_count" json:"message_count"`
 	}
 
 	var stats ChatStats

@@ -1,4 +1,4 @@
-// internal/handlers/heroes.go
+// internal/handlers/heroes.go - исправленная версия
 package handlers
 
 import (
@@ -185,18 +185,21 @@ func (h *HeroHandlers) GetHeroes(c *gin.Context) {
 		return
 	}
 
-	// Добавляем статистику использования героев
-	for i := range heroes {
-		var usageCount int
-		err = h.DB.Get(&usageCount, `
-			SELECT COUNT(*) FROM matches 
-			WHERE (player1_id IN (SELECT id FROM users) OR player2_id IN (SELECT id FROM users))
-			-- TODO: Добавить связь с героями когда будет таблица выбранных героев в матчах
-		`)
-		if err == nil {
-			// heroes[i].UsageCount = usageCount
+	// Добавляем статистику использования героев (закомментировано для будущей реализации)
+	/*
+		for heroIndex := range heroes {
+			var usageCount int
+			err = h.DB.Get(&usageCount, `
+				SELECT COUNT(*) FROM matches
+				WHERE (player1_id IN (SELECT id FROM users) OR player2_id IN (SELECT id FROM users))
+				-- TODO: Добавить связь с героями когда будет таблица выбранных героев в матчах
+			`)
+			if err == nil {
+				// heroes[heroIndex].UsageCount = usageCount
+				_ = usageCount // Используем переменную чтобы избежать ошибки компиляции
+			}
 		}
-	}
+	*/
 
 	pagination := utils.NewPaginationMeta(query.Page, query.PerPage, total)
 	utils.PaginatedSuccessResponse(c, heroes, pagination, "Heroes fetched successfully")
@@ -557,3 +560,5 @@ func (h *HeroHandlers) GetHeroStats(c *gin.Context) {
 
 	utils.SuccessResponse(c, stats, "Hero statistics fetched successfully")
 }
+
+// joinStrings определена в helpers.go

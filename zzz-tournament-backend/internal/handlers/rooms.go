@@ -962,15 +962,7 @@ func (h *RoomHandlers) KickPlayer(c *gin.Context) {
 	h.Hub.BroadcastToRoom(roomID, msgBytes)
 
 	// Отправляем персональное уведомление исключенному игроку
-	kickMsg := models.WSMessage{
-		Type: "kicked_from_room",
-		Data: gin.H{
-			"room_id": roomID,
-			"message": "You have been kicked from the room",
-		},
-	}
-	kickMsgBytes, _ := json.Marshal(kickMsg)
-	// TODO: Отправить конкретному пользователю через WebSocket
+	// TODO: В будущем можно добавить отправку персональных сообщений через WebSocket
 
 	utils.SuccessResponse(c, gin.H{
 		"message": "Player kicked successfully",
