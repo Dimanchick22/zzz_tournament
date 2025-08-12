@@ -24,6 +24,11 @@ type ValidationError struct {
 	Value   interface{} `json:"value,omitempty"`
 }
 
+// Error реализует интерфейс error для ValidationError
+func (v *ValidationError) Error() string {
+	return v.Message
+}
+
 type ValidationErrors []ValidationError
 
 func (v ValidationErrors) Error() string {
