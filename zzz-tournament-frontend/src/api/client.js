@@ -1,4 +1,4 @@
-// API Client - Р±Р°Р·РѕРІС‹Р№ HTTP РєР»РёРµРЅС‚ РЅР° Axios
+// src/api/client.js - версия с защитой от бесконечных циклов
 import axios from 'axios'
 import { env, getApiUrl } from '@config/env'
 import { 
@@ -14,7 +14,14 @@ import {
   extractErrorFromResponse
 } from '@config/api'
 
-// РЎРѕР·РґР°РµРј instance axios
+// Защита от бесконечных циклов
+let isRefreshing = false
+let refreshPromise = null
+let refreshAttempts = 0
+const MAX_REFRESH_ATTEMPTS = 3
+const REFRESH_COOLDOWN = 5000 // 5 секунд
+
+// Создаем instance axios
 const apiClient = axios.create({
   baseURL: getApiUrl(),
   timeout: TIMEOUTS.DEFAULT,
@@ -24,7 +31,7 @@ const apiClient = axios.create({
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    // Р”РѕР±Р°РІР»СЏРµРј С‚РѕРєРµРЅ РёР· localStorage РµСЃР»Рё РµСЃС‚СЊ
+    // Добавляем токен из localStorage если есть
     const authData = localStorage.getItem('auth-storage')
     if (authData) {
       try {
@@ -37,15 +44,13 @@ apiClient.interceptors.request.use(
       }
     }
 
-    // Р”РѕР±Р°РІР»СЏРµРј request ID РґР»СЏ С‚СЂРµР№СЃРёРЅРіР°
+    // Добавляем request ID для трейсинга
     config.metadata = { 
       startTime: Date.now(),
       requestId: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     }
 
-    // Р›РѕРіРёСЂСѓРµРј Р·Р°РїСЂРѕСЃ РІ dev СЂРµР¶РёРјРµ
     logRequest(config)
-
     return config
   },
   (error) => {
@@ -54,49 +59,93 @@ apiClient.interceptors.request.use(
   }
 )
 
-// Response interceptor
+// Response interceptor с защитой от циклов
 apiClient.interceptors.response.use(
   (response) => {
-    // Р”РѕР±Р°РІР»СЏРµРј РІСЂРµРјСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ Р·Р°РїСЂРѕСЃР°
+    // Сбрасываем счетчик при успешном запросе
+    refreshAttempts = 0
+    
     if (response.config.metadata) {
       const duration = Date.now() - response.config.metadata.startTime
       response.config.metadata.duration = duration
     }
 
-    // Р›РѕРіРёСЂСѓРµРј РѕС‚РІРµС‚ РІ dev СЂРµР¶РёРјРµ
     logResponse(response)
-
     return response
   },
   async (error) => {
     const originalRequest = error.config
 
-    // Р›РѕРіРёСЂСѓРµРј РѕС€РёР±РєСѓ
     logError(error)
 
-    // РћР±СЂР°Р±РѕС‚РєР° 401 РѕС€РёР±РєРё (С‚РѕРєРµРЅ РёСЃС‚РµРє)
+    // Обработка 401 ошибки с защитой от циклов
     if (error.response?.status === HTTP_STATUS.UNAUTHORIZED && !originalRequest._retry) {
       originalRequest._retry = true
 
+      // Проверяем лимит попыток refresh
+      if (refreshAttempts >= MAX_REFRESH_ATTEMPTS) {
+        console.error(`? Max refresh attempts (${MAX_REFRESH_ATTEMPTS}) reached, logging out`)
+        handleAuthFailure()
+        return Promise.reject(error)
+      }
+
+      // Если уже идет процесс refresh, ждем его завершения
+      if (isRefreshing) {
+        console.log('? Refresh already in progress, waiting...')
+        try {
+          const result = await refreshPromise
+          if (result.success) {
+            originalRequest.headers.Authorization = `Bearer ${result.token}`
+            return apiClient(originalRequest)
+          } else {
+            return Promise.reject(error)
+          }
+        } catch (refreshError) {
+          return Promise.reject(error)
+        }
+      }
+
+      // Начинаем процесс refresh
+      isRefreshing = true
+      refreshAttempts++
+      
+      console.log(`?? Starting token refresh attempt ${refreshAttempts}/${MAX_REFRESH_ATTEMPTS}`)
+      
+      refreshPromise = refreshAuthToken()
+      
       try {
-        // РџС‹С‚Р°РµРјСЃСЏ РѕР±РЅРѕРІРёС‚СЊ С‚РѕРєРµРЅ
-        const refreshResult = await refreshAuthToken()
+        const refreshResult = await refreshPromise
         
         if (refreshResult.success) {
-          // РџРѕРІС‚РѕСЂСЏРµРј РѕСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ Р·Р°РїСЂРѕСЃ СЃ РЅРѕРІС‹Рј С‚РѕРєРµРЅРѕРј
+          console.log('? Token refresh successful')
+          // Повторяем оригинальный запрос с новым токеном
           originalRequest.headers.Authorization = `Bearer ${refreshResult.token}`
           return apiClient(originalRequest)
         } else {
-          // Р•СЃР»Рё РЅРµ СѓРґР°Р»РѕСЃСЊ РѕР±РЅРѕРІРёС‚СЊ С‚РѕРєРµРЅ, РІС‹С…РѕРґРёРј
+          console.error('? Token refresh failed')
           handleAuthFailure()
+          return Promise.reject(error)
         }
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError)
+        console.error('? Token refresh error:', refreshError)
         handleAuthFailure()
+        return Promise.reject(error)
+      } finally {
+        // Сбрасываем флаг и устанавливаем cooldown
+        isRefreshing = false
+        refreshPromise = null
+        
+        // Если достигли лимита попыток, устанавливаем cooldown
+        if (refreshAttempts >= MAX_REFRESH_ATTEMPTS) {
+          setTimeout(() => {
+            refreshAttempts = 0
+            console.log('?? Refresh attempts counter reset after cooldown')
+          }, REFRESH_COOLDOWN)
+        }
       }
     }
 
-    // Retry Р»РѕРіРёРєР° РґР»СЏ СЃРµСЂРІРµСЂРЅС‹С… РѕС€РёР±РѕРє
+    // Retry логика для серверных ошибок
     if (
       isRetryableError(error.response?.status) &&
       originalRequest._retryCount < RETRY_CONFIG.MAX_RETRIES
@@ -111,72 +160,166 @@ apiClient.interceptors.response.use(
       return apiClient(originalRequest)
     }
 
-    // Р’РѕР·РІСЂР°С‰Р°РµРј РѕР±СЂР°Р±РѕС‚Р°РЅРЅСѓСЋ РѕС€РёР±РєСѓ
     const processedError = extractErrorFromResponse(error)
     return Promise.reject(processedError)
   }
 )
 
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ С‚РѕРєРµРЅР°
+// Безопасная функция для обновления токена
 const refreshAuthToken = async () => {
   try {
     const authData = localStorage.getItem('auth-storage')
     if (!authData) {
-      return { success: false }
+      console.warn('No auth data found for refresh')
+      return { success: false, reason: 'no_auth_data' }
     }
 
     const parsedAuth = JSON.parse(authData)
-    const refreshToken = parsedAuth.state?.refreshToken || parsedAuth.state?.token
+    const refreshToken = parsedAuth.state?.refreshToken
 
     if (!refreshToken) {
-      return { success: false }
+      console.warn('No refresh token found')
+      return { success: false, reason: 'no_refresh_token' }
     }
 
-    // РћС‚РїСЂР°РІР»СЏРµРј Р·Р°РїСЂРѕСЃ РЅР° РѕР±РЅРѕРІР»РµРЅРёРµ С‚РѕРєРµРЅР°
+    console.log('?? Attempting to refresh token...')
+
+    // Отправляем запрос на обновление токена с таймаутом
     const response = await axios.post(getApiUrl('/api/v1/auth/refresh'), {}, {
       headers: {
         Authorization: `Bearer ${refreshToken}`,
         'Content-Type': 'application/json'
       },
-      timeout: TIMEOUTS.SHORT
+      timeout: TIMEOUTS.SHORT,
+      // Важно: не используем apiClient чтобы избежать рекурсии
+      validateStatus: (status) => status < 500 // Принимаем все статусы < 500
     })
 
-    if (response.data.success && response.data.token) {
-      // РћР±РЅРѕРІР»СЏРµРј С‚РѕРєРµРЅ РІ localStorage
+    // Проверяем статус ответа
+    if (response.status === 401) {
+      console.warn('Refresh token expired (401)')
+      return { success: false, reason: 'refresh_token_expired' }
+    }
+
+    if (response.status >= 400) {
+      console.error(`Refresh failed with status ${response.status}:`, response.data)
+      return { success: false, reason: 'server_error', status: response.status }
+    }
+
+    // Обрабатываем успешный ответ
+    if (response.data?.success && response.data?.data) {
+      const { access_token, refresh_token, user } = response.data.data
+
+      if (!access_token) {
+        console.error('No access_token in refresh response')
+        return { success: false, reason: 'no_access_token_in_response' }
+      }
+
+      // Обновляем токены в localStorage
       const newAuthData = {
         ...parsedAuth,
         state: {
           ...parsedAuth.state,
-          token: response.data.token
+          token: access_token,
+          refreshToken: refresh_token || refreshToken, // Fallback to old refresh token
+          user: user || parsedAuth.state.user,
+          lastRefresh: Date.now() // Добавляем timestamp последнего refresh
         }
       }
+      
       localStorage.setItem('auth-storage', JSON.stringify(newAuthData))
 
+      console.log('? Tokens refreshed and saved successfully')
       return { 
         success: true, 
-        token: response.data.token 
+        token: access_token,
+        refreshToken: refresh_token || refreshToken
       }
     }
 
-    return { success: false }
+    console.error('Invalid refresh response structure:', response.data)
+    return { success: false, reason: 'invalid_response_structure' }
+
   } catch (error) {
     console.error('Refresh token request failed:', error)
-    return { success: false }
+    
+    // Анализируем тип ошибки
+    if (error.code === 'ECONNABORTED') {
+      return { success: false, reason: 'timeout' }
+    }
+    
+    if (error.response?.status === 401) {
+      return { success: false, reason: 'refresh_token_expired' }
+    }
+    
+    if (error.response?.status >= 500) {
+      return { success: false, reason: 'server_error' }
+    }
+    
+    return { success: false, reason: 'network_error', error: error.message }
   }
 }
 
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё РѕС€РёР±РѕРє Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёРё
+// Функция для обработки ошибок аутентификации с защитой от спама
+let authFailureHandled = false
+
 const handleAuthFailure = () => {
-  // РћС‡РёС‰Р°РµРј localStorage
-  localStorage.removeItem('auth-storage')
+  // Предотвращаем множественные вызовы
+  if (authFailureHandled) {
+    console.log('Auth failure already handled, skipping...')
+    return
+  }
   
-  // РџРµСЂРµРЅР°РїСЂР°РІР»СЏРµРј РЅР° СЃС‚СЂР°РЅРёС†Сѓ РІС…РѕРґР°
-  if (window.location.pathname !== '/login') {
-    window.location.href = '/login'
+  authFailureHandled = true
+  
+  console.log('?? Auth failure - clearing tokens and redirecting')
+  
+  // Очищаем все состояние
+  localStorage.removeItem('auth-storage')
+  isRefreshing = false
+  refreshPromise = null
+  refreshAttempts = 0
+  
+  // Уведомляем пользователя (если есть глобальная функция уведомлений)
+  if (window.showNotification) {
+    window.showNotification('Сессия истекла. Необходимо войти заново.', 'warning')
+  }
+  
+  // Перенаправляем на страницу входа с задержкой для предотвращения спама
+  setTimeout(() => {
+    if (window.location.pathname !== '/login') {
+      const currentPath = window.location.pathname
+      window.location.href = `/login?from=${encodeURIComponent(currentPath)}`
+    }
+    
+    // Сбрасываем флаг через некоторое время
+    setTimeout(() => {
+      authFailureHandled = false
+    }, 2000)
+  }, 100)
+}
+
+// Функция для ручного сброса состояния refresh (для отладки)
+export const resetRefreshState = () => {
+  console.log('?? Manually resetting refresh state')
+  isRefreshing = false
+  refreshPromise = null
+  refreshAttempts = 0
+  authFailureHandled = false
+}
+
+// Функция для проверки состояния refresh (для отладки)
+export const getRefreshState = () => {
+  return {
+    isRefreshing,
+    refreshAttempts,
+    maxAttempts: MAX_REFRESH_ATTEMPTS,
+    authFailureHandled,
+    hasRefreshPromise: !!refreshPromise
   }
 }
 
-// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё РґР»СЏ API Р·Р°РїСЂРѕСЃРѕРІ
+// Остальной код остается без изменений...
 export const apiRequest = {
   get: (url, config = {}) => {
     return apiClient.get(url, config)
@@ -199,7 +342,6 @@ export const apiRequest = {
   }
 }
 
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕС‚РїСЂР°РІРєРё С„Р°Р№Р»РѕРІ
 export const uploadFile = async (url, file, onProgress) => {
   const formData = new FormData()
   formData.append('file', file)
@@ -222,7 +364,6 @@ export const uploadFile = async (url, file, onProgress) => {
   return apiClient.post(url, formData, config)
 }
 
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё СЃС‚Р°С‚СѓСЃР° API
 export const checkApiHealth = async () => {
   try {
     const response = await apiClient.get('/health', { 
@@ -240,12 +381,10 @@ export const checkApiHealth = async () => {
   }
 }
 
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ СѓСЃС‚Р°РЅРѕРІРєРё Р±Р°Р·РѕРІРѕРіРѕ URL (РґР»СЏ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ)
 export const setBaseURL = (baseURL) => {
   apiClient.defaults.baseURL = baseURL
 }
 
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ СѓСЃС‚Р°РЅРѕРІРєРё С‚РѕРєРµРЅР° Р°РІС‚РѕСЂРёР·Р°С†РёРё
 export const setAuthToken = (token) => {
   if (token) {
     apiClient.defaults.headers.Authorization = `Bearer ${token}`
@@ -254,10 +393,8 @@ export const setAuthToken = (token) => {
   }
 }
 
-// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕС‡РёСЃС‚РєРё С‚РѕРєРµРЅР°
 export const clearAuthToken = () => {
   delete apiClient.defaults.headers.Authorization
 }
 
-// Р­РєСЃРїРѕСЂС‚РёСЂСѓРµРј РѕСЃРЅРѕРІРЅРѕР№ РєР»РёРµРЅС‚
 export default apiClient

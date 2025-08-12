@@ -1,56 +1,7 @@
-// Auth API methods
+// src/api/auth.js - исправленная версия
+
 import { apiRequest } from './client'
 import { API_ENDPOINTS } from '@config/api'
-
-/**
- * Регистрация нового пользователя
- * @param {Object} userData - данные пользователя
- * @param {string} userData.username - имя пользователя
- * @param {string} userData.email - email
- * @param {string} userData.password - пароль
- * @returns {Promise<Object>} результат регистрации
- */
-export const registerUser = async (userData) => {
-  try {
-    const response = await apiRequest.post(API_ENDPOINTS.AUTH.REGISTER, {
-      username: userData.username,
-      email: userData.email,
-      password: userData.password
-    })
-
-    // Обрабатываем стандартную структуру ответа бэкенда
-    if (response.data?.success && response.data?.data) {
-      const { token, user } = response.data.data
-
-      if (!token) {
-        return {
-          success: false,
-          error: 'Токен не получен от сервера'
-        }
-      }
-
-      return {
-        success: true,
-        data: response.data,
-        token: token,
-        user: user
-      }
-    }
-
-    // Если структура ответа неожиданная
-    return {
-      success: false,
-      error: response.data?.message || 'Неожиданная структура ответа сервера'
-    }
-
-  } catch (error) {
-    return {
-      success: false,
-      error: error.response?.data?.message || error.message || 'Ошибка регистрации',
-      details: error.response?.data?.details || []
-    }
-  }
-}
 
 /**
  * Вход в систему
@@ -66,11 +17,11 @@ export const loginUser = async (credentials) => {
       password: credentials.password
     })
 
-    // Обрабатываем стандартную структуру ответа бэкенда
+    // Обрабатываем реальную структуру ответа с бэкенда
     if (response.data?.success && response.data?.data) {
-      const { token, user } = response.data.data
+      const { access_token, refresh_token, user } = response.data.data
 
-      if (!token) {
+      if (!access_token) {
         return {
           success: false,
           error: 'Токен не получен от сервера'
@@ -80,7 +31,8 @@ export const loginUser = async (credentials) => {
       return {
         success: true,
         data: response.data,
-        token: token,
+        token: access_token,        // ✅ Используем access_token
+        refreshToken: refresh_token, // ✅ Сохраняем refresh_token
         user: user
       }
     }
@@ -101,6 +53,56 @@ export const loginUser = async (credentials) => {
 }
 
 /**
+ * Регистрация нового пользователя
+ * @param {Object} userData - данные пользователя
+ * @param {string} userData.username - имя пользователя
+ * @param {string} userData.email - email
+ * @param {string} userData.password - пароль
+ * @returns {Promise<Object>} результат регистрации
+ */
+export const registerUser = async (userData) => {
+  try {
+    const response = await apiRequest.post(API_ENDPOINTS.AUTH.REGISTER, {
+      username: userData.username,
+      email: userData.email,
+      password: userData.password
+    })
+
+    // Обрабатываем стандартную структуру ответа бэкенда
+    if (response.data?.success && response.data?.data) {
+      const { access_token, refresh_token, user } = response.data.data
+
+      if (!access_token) {
+        return {
+          success: false,
+          error: 'Токен не получен от сервера'
+        }
+      }
+
+      return {
+        success: true,
+        data: response.data,
+        token: access_token,
+        refreshToken: refresh_token,
+        user: user
+      }
+    }
+
+    return {
+      success: false,
+      error: response.data?.message || 'Неожиданная структура ответа сервера'
+    }
+
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Ошибка регистрации',
+      details: error.response?.data?.details || []
+    }
+  }
+}
+
+/**
  * Обновление токена
  * @returns {Promise<Object>} результат обновления токена
  */
@@ -108,10 +110,20 @@ export const refreshToken = async () => {
   try {
     const response = await apiRequest.post(API_ENDPOINTS.AUTH.REFRESH)
 
+    if (response.data?.success && response.data?.data) {
+      const { access_token, refresh_token, user } = response.data.data
+
+      return {
+        success: true,
+        token: access_token,
+        refreshToken: refresh_token,
+        user: user
+      }
+    }
+
     return {
-      success: true,
-      token: response.data.token,
-      user: response.data.user
+      success: false,
+      error: 'Неожиданная структура ответа сервера'
     }
   } catch (error) {
     return {
@@ -121,21 +133,12 @@ export const refreshToken = async () => {
   }
 }
 
-/**
- * Выход из системы
- * @returns {Promise<Object>} результат выхода
- */
+// Остальные методы остаются без изменений...
 export const logoutUser = async () => {
   try {
-    // Отправляем запрос на сервер для инвалидации токена
     await apiRequest.post(API_ENDPOINTS.AUTH.LOGOUT)
-
-    return {
-      success: true
-    }
+    return { success: true }
   } catch (error) {
-    // Даже если запрос не прошел, считаем выход успешным
-    // так как мы все равно удалим токен локально
     return {
       success: true,
       warning: 'Не удалось уведомить сервер о выходе'
@@ -143,16 +146,10 @@ export const logoutUser = async () => {
   }
 }
 
-/**
- * Проверка валидности токена
- * @returns {Promise<Object>} результат проверки
- */
 export const validateToken = async () => {
   try {
-    // Проверяем токен через запрос профиля
     const response = await apiRequest.get(API_ENDPOINTS.USERS.PROFILE)
 
-    // Обрабатываем различные структуры ответа
     let user = null
     if (response.data?.data) {
       user = response.data.data
@@ -177,91 +174,13 @@ export const validateToken = async () => {
   }
 }
 
-/**
- * Сброс пароля (отправка email)
- * @param {string} email - email для сброса пароля
- * @returns {Promise<Object>} результат отправки
- */
-export const requestPasswordReset = async (email) => {
-  try {
-    const response = await apiRequest.post('/api/v1/auth/forgot-password', {
-      email
-    })
-
-    return {
-      success: true,
-      message: response.data.message || 'Инструкции отправлены на email'
-    }
-  } catch (error) {
-    return {
-      success: false,
-      error: error.message || 'Ошибка отправки инструкций'
-    }
-  }
-}
-
-/**
- * Подтверждение сброса пароля
- * @param {Object} resetData - данные для сброса
- * @param {string} resetData.token - токен сброса
- * @param {string} resetData.password - новый пароль
- * @returns {Promise<Object>} результат сброса
- */
-export const resetPassword = async (resetData) => {
-  try {
-    const response = await apiRequest.post('/api/v1/auth/reset-password', {
-      token: resetData.token,
-      password: resetData.password
-    })
-
-    return {
-      success: true,
-      message: response.data.message || 'Пароль успешно изменен'
-    }
-  } catch (error) {
-    return {
-      success: false,
-      error: error.message || 'Ошибка смены пароля'
-    }
-  }
-}
-
-/**
- * Изменение пароля (для авторизованного пользователя)
- * @param {Object} passwordData - данные для смены пароля
- * @param {string} passwordData.currentPassword - текущий пароль
- * @param {string} passwordData.newPassword - новый пароль
- * @returns {Promise<Object>} результат изменения
- */
-export const changePassword = async (passwordData) => {
-  try {
-    const response = await apiRequest.post('/api/v1/auth/change-password', {
-      current_password: passwordData.currentPassword,
-      new_password: passwordData.newPassword
-    })
-
-    return {
-      success: true,
-      message: response.data.message || 'Пароль успешно изменен'
-    }
-  } catch (error) {
-    return {
-      success: false,
-      error: error.message || 'Ошибка изменения пароля'
-    }
-  }
-}
-
 // Экспорт всех методов
 export const authAPI = {
   register: registerUser,
   login: loginUser,
   refresh: refreshToken,
   logout: logoutUser,
-  validate: validateToken,
-  requestPasswordReset,
-  resetPassword,
-  changePassword
+  validate: validateToken
 }
 
 export default authAPI

@@ -316,10 +316,10 @@
       "now": "now",
       "minutesAgo": "{{count}} min ago",
       "hoursAgo": "{{count}} h ago",
-      "daysAgo": "{{count}} d ago",
-      "weeksAgo": "{{count}} w ago",
-      "monthsAgo": "{{count}} mo ago",
-      "yearsAgo": "{{count}} y ago"
+      "daysAgo": "{{count}} days ago",
+      "weeksAgo": "{{count}} weeks ago",
+      "monthsAgo": "{{count}} months ago",
+      "yearsAgo": "{{count}} years ago"
     },
     
     "pagination": {

@@ -1,4 +1,4 @@
-// Auth Store - управление состоянием аутентификации (исправлено)
+// src/store/authStore.js - исправленная версия
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -10,6 +10,7 @@ export const useAuthStore = create(
       isLoading: false,
       user: null,
       token: null,
+      refreshToken: null, // ✅ Добавляем refresh token
       error: null,
 
       // Actions
@@ -19,14 +20,15 @@ export const useAuthStore = create(
       
       clearError: () => set({ error: null }),
 
-      // Login action
-      login: (userData, token) => {
-        console.log('🔑 Logging in user:', userData?.username, 'with token:', !!token)
+      // Login action - обновлено для работы с новой структурой
+      login: (userData, accessToken, refreshToken) => {
+        console.log('🔑 Logging in user:', userData?.username, 'with token:', !!accessToken)
         
         set({
           isAuthenticated: true,
           user: userData,
-          token: token,
+          token: accessToken,
+          refreshToken: refreshToken, // ✅ Сохраняем refresh token
           error: null,
           isLoading: false
         })
@@ -40,6 +42,7 @@ export const useAuthStore = create(
           isAuthenticated: false,
           user: null,
           token: null,
+          refreshToken: null, // ✅ Очищаем refresh token
           error: null,
           isLoading: false
         })
@@ -64,7 +67,17 @@ export const useAuthStore = create(
         }))
       },
 
-      // Initialize auth (будет вызываться при запуске приложения)
+      // Update tokens (для refresh операций)
+      updateTokens: (accessToken, refreshToken) => {
+        console.log('🔄 Updating tokens')
+        
+        set({
+          token: accessToken,
+          refreshToken: refreshToken
+        })
+      },
+
+      // Initialize auth
       initAuth: () => {
         const state = get()
         console.log('🚀 Initializing auth. Token exists:', !!state.token, 'User exists:', !!state.user)
@@ -79,30 +92,33 @@ export const useAuthStore = create(
             isAuthenticated: false, 
             isLoading: false,
             user: null,
-            token: null 
+            token: null,
+            refreshToken: null
           })
         }
       },
 
-      // Reset store (для отладки)
+      // Reset store
       reset: () => {
         set({
           isAuthenticated: false,
           isLoading: false,
           user: null,
           token: null,
+          refreshToken: null,
           error: null
         })
         localStorage.removeItem('auth-storage')
       }
     }),
     {
-      name: 'auth-storage', // localStorage key
+      name: 'auth-storage',
       partialize: (state) => {
-        // Сохраняем только нужные поля в localStorage
+        // Сохраняем все необходимые поля в localStorage
         return {
           user: state.user,
           token: state.token,
+          refreshToken: state.refreshToken, // ✅ Сохраняем refresh token
           isAuthenticated: state.isAuthenticated
         }
       },
@@ -116,6 +132,7 @@ export const useAuthStore = create(
           console.log('💾 Auth store rehydrated:', {
             hasUser: !!state.user,
             hasToken: !!state.token,
+            hasRefreshToken: !!state.refreshToken,
             username: state.user?.username
           })
           
@@ -126,6 +143,7 @@ export const useAuthStore = create(
             state.isAuthenticated = false
             state.user = null
             state.token = null
+            state.refreshToken = null
           }
         }
       }
