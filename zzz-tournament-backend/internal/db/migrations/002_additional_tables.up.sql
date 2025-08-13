@@ -1,5 +1,3 @@
--- internal/db/migrations/002_additional_tables.up.sql - исправленная версия
-
 -- Add additional columns to users table
 DO $$ 
 BEGIN
@@ -134,46 +132,55 @@ BEGIN
     END IF;
 END $$;
 
-DO $ 
+DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_audit_logs_user_id') THEN
         CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
     END IF;
-END $;
+END $$;
 
-DO $ 
+DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_audit_logs_action') THEN
         CREATE INDEX idx_audit_logs_action ON audit_logs(action);
     END IF;
-END $;
+END $$;
 
-DO $ 
+DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_audit_logs_created_at') THEN
         CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
     END IF;
-END $;
+END $$;
+
+-- First create the trigger function if it doesn't exist
+CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Add trigger for updating updated_at column
-DO $ 
+DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'trigger_refresh_tokens_updated_at') THEN
         CREATE TRIGGER trigger_refresh_tokens_updated_at
             BEFORE UPDATE ON refresh_tokens
             FOR EACH ROW EXECUTE FUNCTION trigger_set_timestamp();
     END IF;
-END $;
+END $$;
 
 -- Clean up expired tokens function
 CREATE OR REPLACE FUNCTION cleanup_expired_tokens()
-RETURNS void AS $
+RETURNS void AS $$
 BEGIN
     DELETE FROM refresh_tokens WHERE expires_at < NOW();
     DELETE FROM password_reset_tokens WHERE expires_at < NOW();
     DELETE FROM room_mutes WHERE expires_at IS NOT NULL AND expires_at < NOW();
 END;
-$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 -- Add comments for documentation
 COMMENT ON TABLE refresh_tokens IS 'Stores JWT refresh tokens for users';
