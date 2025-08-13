@@ -1,113 +1,107 @@
 // internal/models/models.go
 package models
 
-import (
-	"time"
-)
+// Этот файл служит основной точкой входа для пакета models
+// Все модели определены в отдельных файлах:
+//
+// user.go - модель пользователя и связанные методы
+// auth.go - модели аутентификации (токены, события безопасности)
+// hero.go - модель героя и константы
+// room.go - модель комнаты и участников
+// tournament.go - модели турнира и матчей
+// message.go - модель сообщений
+// websocket.go - модели WebSocket сообщений
+// constants.go - общие константы и ограничения
+// interfaces.go - интерфейсы репозиториев
+// validation.go - валидационные функции
 
-type User struct {
-	ID        int       `json:"id" db:"id"`
-	Username  string    `json:"username" db:"username"`
-	Email     string    `json:"email" db:"email"`
-	Password  string    `json:"-" db:"password_hash"`
-	Rating    int       `json:"rating" db:"rating"`
-	Wins      int       `json:"wins" db:"wins"`
-	Losses    int       `json:"losses" db:"losses"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+// Вспомогательные функции для работы с моделями
+
+// NewUser создает нового пользователя с значениями по умолчанию
+func NewUser(username, email, passwordHash string) *User {
+	return &User{
+		Username:      username,
+		Email:         email,
+		Password:      passwordHash,
+		Rating:        DefaultUserRating,
+		Wins:          0,
+		Losses:        0,
+		IsActive:      true,
+		IsVerified:    false,
+		LoginAttempts: 0,
+	}
 }
 
-type Hero struct {
-	ID          int    `json:"id" db:"id"`
-	Name        string `json:"name" db:"name"`
-	Element     string `json:"element" db:"element"`
-	Rarity      string `json:"rarity" db:"rarity"`
-	Role        string `json:"role" db:"role"`
-	Description string `json:"description" db:"description"`
-	ImageURL    string `json:"image_url" db:"image_url"`
-	IsActive    bool   `json:"is_active" db:"is_active"`
+// NewRoom создает новую комнату с значениями по умолчанию
+func NewRoom(name, description string, hostID int, isPrivate bool, password string) *Room {
+	return &Room{
+		Name:         name,
+		Description:  description,
+		HostID:       hostID,
+		MaxPlayers:   DefaultMaxPlayers,
+		CurrentCount: 0,
+		Status:       RoomStatusWaiting,
+		IsPrivate:    isPrivate,
+		Password:     password,
+	}
 }
 
-type Room struct {
-	ID           int       `json:"id" db:"id"`
-	Name         string    `json:"name" db:"name"`
-	Description  string    `json:"description" db:"description"`
-	HostID       int       `json:"host_id" db:"host_id"`
-	Host         *User     `json:"host,omitempty"`
-	MaxPlayers   int       `json:"max_players" db:"max_players"`
-	CurrentCount int       `json:"current_count" db:"current_count"`
-	Status       string    `json:"status" db:"status"` // waiting, in_progress, finished
-	IsPrivate    bool      `json:"is_private" db:"is_private"`
-	Password     string    `json:"-" db:"password"`
-	CreatedAt    time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
-	Participants []User    `json:"participants,omitempty"`
+// NewTournament создает новый турнир
+func NewTournament(roomID int, name string) *Tournament {
+	return &Tournament{
+		RoomID:  roomID,
+		Name:    name,
+		Status:  TournamentStatusCreated,
+		Bracket: make(map[string]interface{}),
+	}
 }
 
-type RoomParticipant struct {
-	RoomID   int       `json:"room_id" db:"room_id"`
-	UserID   int       `json:"user_id" db:"user_id"`
-	JoinedAt time.Time `json:"joined_at" db:"joined_at"`
+// NewMatch создает новый матч
+func NewMatch(tournamentID, round, player1ID, player2ID int) *Match {
+	return &Match{
+		TournamentID: tournamentID,
+		Round:        round,
+		Player1ID:    player1ID,
+		Player2ID:    player2ID,
+		Status:       MatchStatusPending,
+	}
 }
 
-type Tournament struct {
-	ID        int                    `json:"id" db:"id"`
-	RoomID    int                    `json:"room_id" db:"room_id"`
-	Name      string                 `json:"name" db:"name"`
-	Status    string                 `json:"status" db:"status"` // created, started, finished
-	Bracket   map[string]interface{} `json:"bracket" db:"bracket"`
-	WinnerID  *int                   `json:"winner_id" db:"winner_id"`
-	Winner    *User                  `json:"winner,omitempty"`
-	CreatedAt time.Time              `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time              `json:"updated_at" db:"updated_at"`
-	Matches   []Match                `json:"matches,omitempty"`
+// NewMessage создает новое сообщение
+func NewMessage(roomID, userID int, content, msgType string) *Message {
+	return &Message{
+		RoomID:  roomID,
+		UserID:  userID,
+		Content: content,
+		Type:    msgType,
+	}
 }
 
-type Match struct {
-	ID           int       `json:"id" db:"id"`
-	TournamentID int       `json:"tournament_id" db:"tournament_id"`
-	Round        int       `json:"round" db:"round"`
-	Player1ID    int       `json:"player1_id" db:"player1_id"`
-	Player2ID    int       `json:"player2_id" db:"player2_id"`
-	Player1      *User     `json:"player1,omitempty"`
-	Player2      *User     `json:"player2,omitempty"`
-	WinnerID     *int      `json:"winner_id" db:"winner_id"`
-	Winner       *User     `json:"winner,omitempty"`
-	Status       string    `json:"status" db:"status"` // pending, in_progress, finished
-	CreatedAt    time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
+// NewSystemMessage создает системное сообщение
+func NewSystemMessage(roomID int, content string) *Message {
+	return &Message{
+		RoomID:  roomID,
+		UserID:  0, // Системные сообщения не имеют пользователя
+		Content: content,
+		Type:    MessageTypeSystem,
+	}
 }
 
-type Message struct {
-	ID        int       `json:"id" db:"id"`
-	RoomID    int       `json:"room_id" db:"room_id"`
-	UserID    int       `json:"user_id" db:"user_id"`
-	User      *User     `json:"user,omitempty"`
-	Content   string    `json:"content" db:"content"`
-	Type      string    `json:"type" db:"type"` // message, system, join, leave
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
+// NewWSMessage создает новое WebSocket сообщение
+func NewWSMessage(msgType string, data interface{}) *WSMessage {
+	return &WSMessage{
+		Type: msgType,
+		Data: data,
+	}
 }
 
-// WebSocket messages
-type WSMessage struct {
-	Type string      `json:"type"`
-	Data interface{} `json:"data"`
-}
-
-type JoinRoomData struct {
-	RoomID int `json:"room_id"`
-}
-
-type LeaveRoomData struct {
-	RoomID int `json:"room_id"`
-}
-
-type ChatMessageData struct {
-	RoomID  int    `json:"room_id"`
-	Content string `json:"content"`
-}
-
-type MatchResultData struct {
-	MatchID  int `json:"match_id"`
-	WinnerID int `json:"winner_id"`
+// NewErrorWSMessage создает WebSocket сообщение об ошибке
+func NewErrorWSMessage(message, code string) *WSMessage {
+	return &WSMessage{
+		Type: WSTypeError,
+		Data: ErrorData{
+			Message: message,
+			Code:    code,
+		},
+	}
 }

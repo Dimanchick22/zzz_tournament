@@ -4,6 +4,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -22,9 +23,9 @@ type ChatHandlers struct {
 }
 
 // NewChatHandlers создает новый экземпляр ChatHandlers
-func NewChatHandlers(db *sqlx.DB, hub *websocket.Hub) *ChatHandlers {
+func NewChatHandlers(db *sqlx.DB, hub *websocket.Hub, logger *slog.Logger) *ChatHandlers {
 	return &ChatHandlers{
-		BaseHandlers: newBaseHandlers(db, hub),
+		BaseHandlers: newBaseHandlers(db, hub, logger),
 	}
 }
 

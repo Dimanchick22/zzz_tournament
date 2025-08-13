@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"database/sql"
+	"log/slog"
 	"strconv"
 
 	"zzz-tournament/internal/models"
@@ -20,9 +21,9 @@ type HeroHandlers struct {
 }
 
 // NewHeroHandlers создает новый экземпляр HeroHandlers
-func NewHeroHandlers(db *sqlx.DB, hub *websocket.Hub) *HeroHandlers {
+func NewHeroHandlers(db *sqlx.DB, hub *websocket.Hub, logger *slog.Logger) *HeroHandlers {
 	return &HeroHandlers{
-		BaseHandlers: newBaseHandlers(db, hub),
+		BaseHandlers: newBaseHandlers(db, hub, logger),
 	}
 }
 

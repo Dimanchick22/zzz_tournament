@@ -1,7 +1,7 @@
-// internal/websocket/hub.go - исправленная версия
 package websocket
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -16,10 +16,22 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const (
+	// Таймауты
+	writeWait      = 10 * time.Second
+	pongWait       = 60 * time.Second
+	pingPeriod     = (pongWait * 9) / 10
+	maxMessageSize = 1024 // Увеличено для JSON сообщений
+
+	// Лимиты
+	maxConnections = 1000
+)
+
 var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
 		origin := r.Header.Get("Origin")
-		// В продакшене нужно проверять origins
 		allowedOrigins := []string{
 			"http://localhost:3000",
 			"http://localhost:3001",
@@ -32,8 +44,13 @@ var upgrader = websocket.Upgrader{
 			}
 		}
 
-		// В режиме разработки разрешаем localhost
-		return strings.Contains(origin, "localhost") || strings.Contains(origin, "127.0.0.1")
+		// БЕЗОПАСНАЯ проверка для разработки
+		if strings.HasPrefix(origin, "http://localhost:") ||
+			strings.HasPrefix(origin, "http://127.0.0.1:") {
+			return true
+		}
+
+		return false
 	},
 }
 
@@ -44,7 +61,9 @@ type Client struct {
 	UserID   int
 	Username string
 	RoomID   int
-	mu       sync.RWMutex // Защита от race conditions
+	mu       sync.RWMutex
+	ctx      context.Context
+	cancel   context.CancelFunc
 }
 
 type Hub struct {
@@ -52,162 +71,122 @@ type Hub struct {
 	Broadcast  chan []byte
 	Register   chan *Client
 	Unregister chan *Client
-	Rooms      map[int]map[*Client]bool // room_id -> clients
-	mu         sync.RWMutex             // Защита от race conditions
+	Rooms      map[int]map[*Client]bool
+	mu         sync.RWMutex
+	ctx        context.Context
+	cancel     context.CancelFunc
 }
 
 func NewHub() *Hub {
+	ctx, cancel := context.WithCancel(context.Background())
 	return &Hub{
 		Clients:    make(map[*Client]bool),
 		Broadcast:  make(chan []byte),
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		Rooms:      make(map[int]map[*Client]bool),
+		ctx:        ctx,
+		cancel:     cancel,
 	}
 }
 
 func (h *Hub) Run() {
+	defer h.cancel()
+
 	for {
 		select {
+		case <-h.ctx.Done():
+			log.Println("Hub shutting down...")
+			return
+
 		case client := <-h.Register:
 			h.mu.Lock()
+			// Проверяем лимит соединений
+			if len(h.Clients) >= maxConnections {
+				h.mu.Unlock()
+				client.closeConnection()
+				log.Printf("Connection limit exceeded, rejected client: %d", client.UserID)
+				continue
+			}
+
 			h.Clients[client] = true
 			h.mu.Unlock()
 			log.Printf("Client registered: %d (%s)", client.UserID, client.Username)
 
 		case client := <-h.Unregister:
-			h.mu.Lock()
-			if _, ok := h.Clients[client]; ok {
-				delete(h.Clients, client)
-				close(client.Send)
-
-				// Remove from room safely
-				if client.RoomID > 0 {
-					if room, exists := h.Rooms[client.RoomID]; exists {
-						delete(room, client)
-						if len(room) == 0 {
-							delete(h.Rooms, client.RoomID)
-						}
-					}
-				}
-				log.Printf("Client unregistered: %d (%s)", client.UserID, client.Username)
-			}
-			h.mu.Unlock()
+			h.unregisterClient(client)
 
 		case message := <-h.Broadcast:
-			h.mu.RLock()
-			for client := range h.Clients {
-				select {
-				case client.Send <- message:
-				default:
-					close(client.Send)
-					delete(h.Clients, client)
-				}
-			}
-			h.mu.RUnlock()
+			h.broadcastMessage(message)
 		}
 	}
 }
 
-func (h *Hub) BroadcastToRoom(roomID int, message []byte) {
-	h.mu.RLock()
-	room, exists := h.Rooms[roomID]
-	if !exists {
-		h.mu.RUnlock()
-		return
-	}
+func (h *Hub) unregisterClient(client *Client) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
 
-	// Создаем копию клиентов для безопасной итерации
-	clients := make([]*Client, 0, len(room))
-	for client := range room {
+	if _, ok := h.Clients[client]; ok {
+		delete(h.Clients, client)
+
+		// Безопасно закрываем канал только если он еще открыт
+		select {
+		case <-client.Send:
+			// Канал уже закрыт
+		default:
+			close(client.Send)
+		}
+
+		// Удаляем из комнаты
+		if client.RoomID > 0 {
+			if room, exists := h.Rooms[client.RoomID]; exists {
+				delete(room, client)
+				if len(room) == 0 {
+					delete(h.Rooms, client.RoomID)
+				}
+			}
+		}
+
+		// Отменяем контекст клиента
+		if client.cancel != nil {
+			client.cancel()
+		}
+
+		log.Printf("Client unregistered: %d (%s)", client.UserID, client.Username)
+	}
+}
+
+func (h *Hub) broadcastMessage(message []byte) {
+	h.mu.RLock()
+	clients := make([]*Client, 0, len(h.Clients))
+	for client := range h.Clients {
 		clients = append(clients, client)
 	}
 	h.mu.RUnlock()
 
-	// Отправляем сообщения
 	for _, client := range clients {
 		select {
 		case client.Send <- message:
 		default:
-			// Клиент недоступен, удаляем его
-			h.removeClientFromRoom(client, roomID)
+			// Клиент заблокирован, удаляем его
+			go func(c *Client) {
+				h.Unregister <- c
+			}(client)
 		}
 	}
 }
 
-func (h *Hub) removeClientFromRoom(client *Client, roomID int) {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-
-	if room, exists := h.Rooms[roomID]; exists {
-		delete(room, client)
-		if len(room) == 0 {
-			delete(h.Rooms, roomID)
-		}
-	}
-
-	delete(h.Clients, client)
-	close(client.Send)
-}
-
-func (h *Hub) JoinRoom(client *Client, roomID int) {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-
-	// Leave current room if any
-	if client.RoomID > 0 {
-		if room, exists := h.Rooms[client.RoomID]; exists {
-			delete(room, client)
-			if len(room) == 0 {
-				delete(h.Rooms, client.RoomID)
-			}
-		}
-	}
-
-	// Join new room
-	if h.Rooms[roomID] == nil {
-		h.Rooms[roomID] = make(map[*Client]bool)
-	}
-	h.Rooms[roomID][client] = true
-
-	client.mu.Lock()
-	client.RoomID = roomID
-	client.mu.Unlock()
-
-	log.Printf("Client %d joined room %d", client.UserID, roomID)
-}
-
-func (h *Hub) LeaveRoom(client *Client) {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-
-	client.mu.RLock()
-	roomID := client.RoomID
-	client.mu.RUnlock()
-
-	if roomID > 0 {
-		if room, exists := h.Rooms[roomID]; exists {
-			delete(room, client)
-			if len(room) == 0 {
-				delete(h.Rooms, roomID)
-			}
-		}
-
-		client.mu.Lock()
-		client.RoomID = 0
-		client.mu.Unlock()
-
-		log.Printf("Client %d left room %d", client.UserID, roomID)
-	}
+func (h *Hub) Shutdown() {
+	h.cancel()
 }
 
 func HandleWebSocket(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	// Извлекаем JWT токен из query параметров или заголовков
+	// Исправленная логика с токеном
 	token := r.URL.Query().Get("token")
 	if token == "" {
-		token = r.Header.Get("Authorization")
-		if strings.HasPrefix(token, "Bearer ") {
-			token = strings.TrimPrefix(token, "Bearer ")
+		authHeader := r.Header.Get("Authorization")
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			token = strings.TrimPrefix(authHeader, "Bearer ")
 		}
 	}
 
@@ -216,7 +195,6 @@ func HandleWebSocket(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Валидируем токен
 	userID, username, err := auth.GetUserFromToken(token)
 	if err != nil {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
@@ -229,16 +207,20 @@ func HandleWebSocket(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
 	client := &Client{
 		Hub:      hub,
 		Conn:     conn,
 		Send:     make(chan []byte, 256),
 		UserID:   userID,
 		Username: username,
+		ctx:      ctx,
+		cancel:   cancel,
 	}
 
 	client.Hub.Register <- client
 
+	// Запускаем горутины с контекстом
 	go client.writePump()
 	go client.readPump()
 }
@@ -249,7 +231,21 @@ func (c *Client) readPump() {
 		c.Conn.Close()
 	}()
 
+	// Настройки чтения
+	c.Conn.SetReadLimit(maxMessageSize)
+	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.Conn.SetPongHandler(func(string) error {
+		c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+		return nil
+	})
+
 	for {
+		select {
+		case <-c.ctx.Done():
+			return
+		default:
+		}
+
 		_, messageBytes, err := c.Conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
@@ -269,18 +265,46 @@ func (c *Client) readPump() {
 }
 
 func (c *Client) writePump() {
-	defer c.Conn.Close()
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+		c.Conn.Close()
+	}()
 
 	for {
 		select {
+		case <-c.ctx.Done():
+			c.writeMessage(websocket.CloseMessage, []byte{})
+			return
+
 		case message, ok := <-c.Send:
 			if !ok {
-				c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+				c.writeMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-			c.Conn.WriteMessage(websocket.TextMessage, message)
+
+			if err := c.writeMessage(websocket.TextMessage, message); err != nil {
+				log.Printf("Error writing message to client %d: %v", c.UserID, err)
+				return
+			}
+
+		case <-ticker.C:
+			if err := c.writeMessage(websocket.PingMessage, nil); err != nil {
+				log.Printf("Error sending ping to client %d: %v", c.UserID, err)
+				return
+			}
 		}
 	}
+}
+
+func (c *Client) writeMessage(messageType int, data []byte) error {
+	c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+	return c.Conn.WriteMessage(messageType, data)
+}
+
+func (c *Client) closeConnection() {
+	c.cancel()
+	c.Conn.Close()
 }
 
 // Безопасная обработка сообщений с правильными типами
@@ -382,6 +406,86 @@ func (c *Client) handleHeartbeat(data interface{}) {
 		},
 	}
 	c.sendMessage(response)
+}
+
+// Методы для работы с комнатами
+func (h *Hub) BroadcastToRoom(roomID int, message []byte) {
+	h.mu.RLock()
+	room, exists := h.Rooms[roomID]
+	if !exists {
+		h.mu.RUnlock()
+		return
+	}
+
+	// Создаем копию клиентов для безопасной итерации
+	clients := make([]*Client, 0, len(room))
+	for client := range room {
+		clients = append(clients, client)
+	}
+	h.mu.RUnlock()
+
+	// Отправляем сообщения
+	for _, client := range clients {
+		select {
+		case client.Send <- message:
+		default:
+			// Клиент недоступен, удаляем его
+			go func(c *Client) {
+				h.Unregister <- c
+			}(client)
+		}
+	}
+}
+
+func (h *Hub) JoinRoom(client *Client, roomID int) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	// Leave current room if any
+	if client.RoomID > 0 {
+		if room, exists := h.Rooms[client.RoomID]; exists {
+			delete(room, client)
+			if len(room) == 0 {
+				delete(h.Rooms, client.RoomID)
+			}
+		}
+	}
+
+	// Join new room
+	if h.Rooms[roomID] == nil {
+		h.Rooms[roomID] = make(map[*Client]bool)
+	}
+	h.Rooms[roomID][client] = true
+
+	client.mu.Lock()
+	client.RoomID = roomID
+	client.mu.Unlock()
+
+	log.Printf("Client %d joined room %d", client.UserID, roomID)
+}
+
+func (h *Hub) LeaveRoom(client *Client) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	client.mu.RLock()
+	roomID := client.RoomID
+	client.mu.RUnlock()
+
+	if roomID > 0 {
+		if room, exists := h.Rooms[roomID]; exists {
+			delete(room, client)
+			if len(room) == 0 {
+				delete(h.Rooms, roomID)
+			}
+		}
+
+		client.mu.Lock()
+		client.RoomID = 0
+		client.mu.Unlock()
+
+		log.Printf("Client %d left room %d", client.UserID, roomID)
+	}
 }
 
 // Вспомогательные функции для безопасного извлечения данных

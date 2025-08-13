@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,6 +17,7 @@ import (
 	"zzz-tournament/internal/middleware"
 	"zzz-tournament/internal/websocket"
 	"zzz-tournament/pkg/auth"
+	authConfig "zzz-tournament/pkg/config"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -29,24 +31,68 @@ func main() {
 
 	cfg := config.Load()
 
-	// Устанавливаем JWT секрет
-	auth.SetSecret(cfg.JWTSecret)
+	// Инициализация структурированного логгера
+	var logger *slog.Logger
+	if cfg.Environment == "production" {
+		// JSON логирование для продакшена
+		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelInfo,
+		}))
+	} else {
+		// Текстовое логирование для разработки
+		logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		}))
+	}
+
+	// Загружаем конфигурацию аутентификации
+	authCfg, err := authConfig.LoadAuthConfig()
+	if err != nil {
+		logger.Error("Failed to load auth config", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	// Валидируем конфигурацию аутентификации
+	if err := authCfg.Validate(); err != nil {
+		logger.Error("Invalid auth config", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	// Устанавливаем JWT секрет из конфигурации
+	if authCfg.JWTSecret == "" {
+		authCfg.JWTSecret = cfg.JWTSecret // Fallback на старую конфигурацию
+	}
+	auth.SetSecret(authCfg.JWTSecret)
+
+	logger.Info("Application starting",
+		slog.String("environment", cfg.Environment),
+		slog.String("port", cfg.Port),
+		slog.Bool("rate_limiting", authCfg.RateLimitEnabled),
+	)
 
 	// Подключение к БД
 	database, err := db.Connect(cfg.DatabaseURL)
 	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
+		logger.Error("Failed to connect to database", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
 	defer database.Close()
 
+	logger.Info("Database connected successfully")
+
 	// Миграции
 	if err := db.Migrate(database); err != nil {
-		log.Fatal("Failed to run migrations:", err)
+		logger.Error("Failed to run migrations", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
+
+	logger.Info("Database migrations completed")
 
 	// WebSocket Hub
 	hub := websocket.NewHub()
 	go hub.Run()
+
+	logger.Info("WebSocket hub started")
 
 	// Настройка Gin в зависимости от окружения
 	if cfg.Environment == "production" {
@@ -89,11 +135,16 @@ func main() {
 		r.Use(middleware.NoSniffMiddleware())
 	}
 
-	// Global rate limiting (100 requests per 10 seconds)
-	r.Use(middleware.GlobalRateLimiter())
+	// Global rate limiting (только если включено в конфиге)
+	if authCfg.RateLimitEnabled {
+		r.Use(middleware.GlobalRateLimiter())
+		logger.Info("Global rate limiting enabled")
+	}
 
 	// === HANDLERS ===
-	h := handlers.New(database, hub)
+	h := handlers.New(database, hub, logger, authCfg)
+
+	logger.Info("Handlers initialized successfully")
 
 	// === HEALTH CHECK ===
 	r.GET("/health", func(c *gin.Context) {
@@ -101,6 +152,12 @@ func main() {
 			"status":    "healthy",
 			"timestamp": time.Now().UTC(),
 			"version":   "1.0.0",
+			"features": gin.H{
+				"database":      "connected",
+				"websocket":     "active",
+				"rate_limiting": authCfg.RateLimitEnabled,
+				"environment":   cfg.Environment,
+			},
 		})
 	})
 
@@ -110,8 +167,10 @@ func main() {
 	// === AUTH ROUTES ===
 	authGroup := api.Group("/auth")
 	{
-		// Строгий rate limiting для аутентификации
-		authGroup.Use(middleware.AuthRateLimiter())
+		// Rate limiting для аутентификации (если включено)
+		if authCfg.RateLimitEnabled {
+			authGroup.Use(middleware.AuthRateLimiter())
+		}
 
 		// Аудит логирование для критичных действий
 		authGroup.Use(middleware.AuditLoggingMiddleware())
@@ -129,9 +188,13 @@ func main() {
 	protected := api.Group("/")
 
 	// Middleware для защищенных роутов
-	protected.Use(middleware.AuthMiddleware())                  // JWT аутентификация
-	protected.Use(middleware.RefreshTokenMiddleware())          // Автообновление токенов
-	protected.Use(createUserBasedRateLimiter(time.Second, 120)) // Лимиты по пользователям
+	protected.Use(middleware.AuthMiddleware()) // JWT аутентификация
+
+	// Автообновление токенов и пользовательские лимиты (если включено)
+	if authCfg.RateLimitEnabled {
+		protected.Use(middleware.RefreshTokenMiddleware())          // Автообновление токенов
+		protected.Use(createUserBasedRateLimiter(time.Second, 120)) // Лимиты по пользователям
+	}
 
 	{
 		// === USER ROUTES ===
@@ -212,11 +275,49 @@ func main() {
 	{
 		// WebSocket specific middleware
 		ws.Use(middleware.WebSocketCORSMiddleware())
-		ws.Use(middleware.WebSocketRateLimiter())
+
+		// WebSocket rate limiting (если включено)
+		if authCfg.RateLimitEnabled {
+			ws.Use(middleware.WebSocketRateLimiter())
+		}
 
 		ws.GET("", func(c *gin.Context) {
 			websocket.HandleWebSocket(hub, c.Writer, c.Request)
 		})
+	}
+
+	// === ADMIN ROUTES (только для разработки и специальных эндпоинтов) ===
+	if gin.Mode() != gin.ReleaseMode {
+		admin := api.Group("/admin")
+		admin.Use(middleware.AuthMiddleware())
+		admin.Use(middleware.AdminOnlyMiddleware())
+		{
+			// Эндпоинт для очистки просроченных токенов
+			admin.POST("/cleanup-tokens", func(c *gin.Context) {
+				if err := h.Auth.CleanupExpiredTokens(); err != nil {
+					logger.Error("Failed to cleanup tokens", slog.String("error", err.Error()))
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cleanup tokens"})
+					return
+				}
+				c.JSON(http.StatusOK, gin.H{"message": "Tokens cleaned up successfully"})
+			})
+
+			// Статистика системы
+			admin.GET("/stats", func(c *gin.Context) {
+				c.JSON(http.StatusOK, gin.H{
+					"auth_config": gin.H{
+						"access_token_ttl":   authCfg.AccessTokenTTL.String(),
+						"refresh_token_ttl":  authCfg.RefreshTokenTTL.String(),
+						"rate_limiting":      authCfg.RateLimitEnabled,
+						"max_login_attempts": authCfg.MaxLoginAttempts,
+					},
+					"server_info": gin.H{
+						"environment": cfg.Environment,
+						"uptime":      time.Now().UTC(),
+					},
+				})
+			})
+		}
 	}
 
 	// === API DOCUMENTATION (в режиме разработки) ===
@@ -225,6 +326,11 @@ func main() {
 			c.JSON(200, gin.H{
 				"message": "ZZZ Tournament API Documentation",
 				"version": "1.0.0",
+				"security": gin.H{
+					"rate_limiting":      authCfg.RateLimitEnabled,
+					"max_login_attempts": authCfg.MaxLoginAttempts,
+					"token_rotation":     authCfg.RefreshTokenRotationThreshold.String(),
+				},
 				"endpoints": map[string]interface{}{
 					"auth": map[string]string{
 						"POST /api/v1/auth/register":        "Регистрация пользователя",
@@ -270,19 +376,28 @@ func main() {
 						"POST /api/v1/tournaments/:id/matches/:match_id/result": "Результат матча",
 						"POST /api/v1/tournaments/:id/cancel":                   "Отменить турнир",
 					},
+					"admin": map[string]string{
+						"POST /api/v1/admin/cleanup-tokens": "Очистка просроченных токенов",
+						"GET /api/v1/admin/stats":           "Статистика системы",
+					},
 					"websocket": "/ws - WebSocket соединение",
 				},
 				"features": []string{
-					"JWT Authentication",
+					"JWT Authentication with enhanced security",
 					"Real-time WebSocket chat",
 					"Tournament bracket generation",
 					"ELO rating system",
 					"Room management",
 					"Hero database",
 					"User statistics",
-					"Rate limiting",
+					"Configurable rate limiting",
 					"CORS protection",
-					"Structured logging",
+					"Structured logging with slog",
+					"Account lockout protection",
+					"Token rotation",
+					"Password reset functionality",
+					"Security event logging",
+					"Automatic token cleanup",
 				},
 			})
 		})
@@ -297,20 +412,45 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 	}
 
+	// Запуск фоновой задачи очистки токенов (каждые 6 часов)
+	if authCfg.RateLimitEnabled {
+		go func() {
+			ticker := time.NewTicker(6 * time.Hour)
+			defer ticker.Stop()
+
+			for {
+				select {
+				case <-ticker.C:
+					if err := h.Auth.CleanupExpiredTokens(); err != nil {
+						logger.Error("Failed to cleanup expired tokens", slog.String("error", err.Error()))
+					} else {
+						logger.Info("Expired tokens cleaned up successfully")
+					}
+				}
+			}
+		}()
+
+		logger.Info("Token cleanup task started (runs every 6 hours)")
+	}
+
 	// === GRACEFUL SHUTDOWN ===
 	go func() {
-		log.Printf("🚀 Server starting on port %s", cfg.Port)
-		log.Printf("🌍 Environment: %s", cfg.Environment)
-		log.Printf("📊 Database: Connected")
+		logger.Info("Server starting",
+			slog.String("port", cfg.Port),
+			slog.String("environment", cfg.Environment),
+		)
 
 		if gin.Mode() != gin.ReleaseMode {
-			log.Printf("📚 API Documentation: http://localhost:%s/docs", cfg.Port)
-			log.Printf("💊 Health Check: http://localhost:%s/health", cfg.Port)
-			log.Printf("🔌 WebSocket: ws://localhost:%s/ws", cfg.Port)
+			logger.Info("Development endpoints available",
+				slog.String("docs", "http://localhost:"+cfg.Port+"/docs"),
+				slog.String("health", "http://localhost:"+cfg.Port+"/health"),
+				slog.String("websocket", "ws://localhost:"+cfg.Port+"/ws"),
+			)
 		}
 
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("Failed to start server: %v", err)
+			logger.Error("Failed to start server", slog.String("error", err.Error()))
+			os.Exit(1)
 		}
 	}()
 
@@ -319,16 +459,17 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	log.Println("🛑 Shutting down server...")
+	logger.Info("Shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal("Server forced to shutdown:", err)
+		logger.Error("Server forced to shutdown", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
 
-	log.Println("✅ Server exited")
+	logger.Info("Server exited successfully")
 }
 
 // === HELPER FUNCTIONS ===

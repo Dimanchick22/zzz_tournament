@@ -4,6 +4,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log/slog"
 	"strconv"
 	"time"
 
@@ -23,9 +24,9 @@ type TournamentHandlers struct {
 }
 
 // NewTournamentHandlers создает новый экземпляр TournamentHandlers
-func NewTournamentHandlers(db *sqlx.DB, hub *websocket.Hub) *TournamentHandlers {
+func NewTournamentHandlers(db *sqlx.DB, hub *websocket.Hub, logger *slog.Logger) *TournamentHandlers {
 	return &TournamentHandlers{
-		BaseHandlers: newBaseHandlers(db, hub),
+		BaseHandlers: newBaseHandlers(db, hub, logger),
 	}
 }
 

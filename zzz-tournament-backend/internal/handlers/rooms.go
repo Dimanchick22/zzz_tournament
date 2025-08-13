@@ -4,6 +4,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log/slog"
 	"strconv"
 	"time"
 
@@ -22,9 +23,9 @@ type RoomHandlers struct {
 }
 
 // NewRoomHandlers создает новый экземпляр RoomHandlers
-func NewRoomHandlers(db *sqlx.DB, hub *websocket.Hub) *RoomHandlers {
+func NewRoomHandlers(db *sqlx.DB, hub *websocket.Hub, logger *slog.Logger) *RoomHandlers {
 	return &RoomHandlers{
-		BaseHandlers: newBaseHandlers(db, hub),
+		BaseHandlers: newBaseHandlers(db, hub, logger),
 	}
 }
 
